@@ -19,6 +19,7 @@ public class Main {
         Triangle triangle = new Triangle(Arrays.asList(pieces[0],pieces[1],pieces[3]));
         Square square = new Square(Arrays.asList(pieces[2],pieces[4],pieces[5],pieces[8]));
 
+
         pieces[8].setPieceType(PieceType.RED);
         square.getPieces().stream()
                 .map(Piece::getPieceType)
