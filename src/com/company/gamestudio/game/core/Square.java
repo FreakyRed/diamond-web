@@ -1,18 +1,15 @@
 package com.company.gamestudio.game.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Square extends Tile {
 
-    private List<Piece> pieces;
+    private List<Piece> pieces = new ArrayList<>();
 
-    Square(){
+    Square() {
 
-    }
-
-    public Square(List<Piece> listOfPieces){
-        pieces = listOfPieces;
     }
 
     @Override
@@ -21,18 +18,13 @@ public class Square extends Tile {
     }
 
     @Override
-    protected void addPieces(Piece[] pieces) {
-        for(int i = 0; i<this.pieces.size() ; i++){
-            this.pieces.set(i,pieces[i]);
-        }
+    protected void addPiece(Piece piece) {
+        this.pieces.add(piece);
     }
 
-
-    public List<Piece> fillListWithPieces() {
-        List<Piece> newList = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            newList.add(new Piece());
-        }
-        return newList;
+    public boolean filledWithOneColour(PieceType colour) {
+        return pieces.stream()
+                .allMatch(p -> p.getPieceType() == colour);
     }
+
 }
