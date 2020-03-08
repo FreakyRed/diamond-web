@@ -1,9 +1,11 @@
 package com.company.gamestudio.game.core;
 
+import com.company.gamestudio.game.exceptions.WrongPieceTypeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Piece implements Comparable<Piece>{
+public class Piece implements Comparable<Piece> {
 
     private PieceType pieceType = PieceType.EMPTY;
     private List<Piece> connectedPieces = new ArrayList<>();
@@ -30,8 +32,23 @@ public class Piece implements Comparable<Piece>{
         }
     }
 
-    public void removeRedPiece(){
-        if(this.getPieceType() == PieceType.RED){
+    public boolean surroundedByEnemyPieces() {
+        if (pieceType == PieceType.BLACK) {
+            return this.getConnectedPieces().stream()
+                    .map(p -> p.getPieceType())
+                    .allMatch(p -> p == PieceType.WHITE);
+        }
+        else if(pieceType == PieceType.WHITE) {
+            return this.getConnectedPieces().stream()
+                    .map(p -> p.getPieceType())
+                    .allMatch(p-> p == PieceType.BLACK);
+        }
+
+        return false;
+    }
+
+    public void removeRedPiece() {
+        if (this.getPieceType() == PieceType.RED) {
             this.setPieceType(PieceType.EMPTY);
         }
     }

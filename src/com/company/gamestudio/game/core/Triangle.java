@@ -28,14 +28,6 @@ public class Triangle extends Tile {
         this.pieces.add(piece);
     }
 
-    public List<Piece> fillListWithPieces() {
-        List<Piece> newList = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            newList.add(new Piece());
-        }
-        return newList;
-    }
-
     public boolean isCapturable(Player player) {
         int countBlack = 0, countWhite = 0;
         for (Piece piece : pieces) {
@@ -51,10 +43,19 @@ public class Triangle extends Tile {
                 (countBlack == 1 && countWhite == 2 && player instanceof WhitePlayer)) {
             return true;
         }
-        return false;
+
+        return pieces.stream()
+                .anyMatch(Piece::surroundedByEnemyPieces);
     }
 
     public Piece findCapturablePiece(Player player) {
+        if (pieces.stream().anyMatch(Piece::surroundedByEnemyPieces)) {
+            return pieces.stream()
+                    .filter(p -> p.surroundedByEnemyPieces())
+                    .findFirst()
+                    .get();
+        }
+
         return pieces.stream()
                 .filter(p -> p.getPieceType() != player.getColour())
                 .findFirst()

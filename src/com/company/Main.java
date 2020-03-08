@@ -31,7 +31,9 @@ public class Main {
         field.printField();
         field.movePiece(1, 1, 2, 0);
         field.printField();
-        if (triangle.isCapturable(new BlackPlayer())) {
+
+
+        if (triangle.isCapturable(new WhitePlayer())) {
             System.out.println("CAPTURABLE");
         } else {
             System.out.println("NOT CAPTURABLE");
