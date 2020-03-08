@@ -144,32 +144,43 @@ public class Field {
     }
 
     public void printField() {
-        for (Piece[] pieceRow : field) {
-            for (Piece piece : pieceRow) {
-                System.out.print(getPrefix(pieceRow.length));
-                switch (piece.getPieceType()) {
-                    case EMPTY:
-                        System.out.print("E");
-                        break;
-                    case RED:
-                        System.out.print("R");
-                        break;
-                    case BLACK:
-                        System.out.print("B");
-                        break;
-                    case WHITE:
-                        System.out.print("W");
-                        break;
-                    default:
-                        throw new IllegalArgumentException();
-                }
+        for (int i = 0; i < field.length/2 ; i++){
+            for (int j = 0; j < field[i].length; j++) {
+                System.out.print(getPrefix(field[i].length));
+                printCharacter(field[i][j].getPieceType());
             }
             System.out.println();
+        }
+
+        System.out.print("");
+        for(int i=0; i < field[10].length ; i++){
+            System.out.print("      ");
+            printCharacter(field[10][i].getPieceType());
+        }
+        System.out.println();
+    }
+
+    private void printCharacter(PieceType pieceType){
+        switch (pieceType) {
+            case EMPTY:
+                System.out.print(".");
+                break;
+            case RED:
+                System.out.print("R");
+                break;
+            case BLACK:
+                System.out.print("B");
+                break;
+            case WHITE:
+                System.out.print("W");
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
     private String getPrefix(int number) {
-        String string = "";
+        String string = "       ";
         for (int i = 0; i < 10 / number; i++) {
             string += " ";
         }

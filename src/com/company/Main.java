@@ -26,10 +26,13 @@ public class Main {
         field.addTile(triangle1);
 
         pieces[0].setPieceType(PieceType.WHITE);
-        pieces[1].setPieceType(PieceType.BLACK);
+        pieces[1].setPieceType(PieceType.WHITE);
         pieces[2].setPieceType(PieceType.WHITE);
+        pieces[3].setPieceType(PieceType.BLACK);
+        pieces[7].setPieceType(PieceType.WHITE);
+        pieces[5].setPieceType(PieceType.WHITE);
         field.printField();
-        field.movePiece(1, 1, 2, 0);
+        field.movePiece(3, 1, 4, 2);
         field.printField();
 
 
