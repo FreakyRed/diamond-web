@@ -3,6 +3,8 @@ package com.company.gamestudio.game.core;
 import com.company.gamestudio.game.core.players.BlackPlayer;
 import com.company.gamestudio.game.core.players.Player;
 import com.company.gamestudio.game.core.players.WhitePlayer;
+import com.company.gamestudio.game.exceptions.gamephase.WrongGamePhaseException;
+import com.company.gamestudio.game.exceptions.pieces.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,10 +13,9 @@ import java.util.stream.Stream;
 public class Field {
     private Piece[][] field;
     private List<Tile> tiles = new ArrayList<>();
-    private GamePhase gamePhase = GamePhase.PLACEMENT;
+    private GamePhase gamePhase = GamePhase.MOVEMENT;
     private GameState gameState = GameState.PLAYING;
-    private Player[] players = new Player[]{new WhitePlayer(),new BlackPlayer()};
-    //private Player player;
+    private Player[] players = new Player[]{new WhitePlayer(), new BlackPlayer()};
 
     public Field() {
         field = new Piece[21][];
@@ -48,17 +49,17 @@ public class Field {
                 .toArray(Piece[]::new);
     }
 
-    public Player getCurrentPlayer(){
+    public Player getCurrentPlayer() {
         return players[0].getRemainingPieces() <= players[1].getRemainingPieces() ? players[1] : players[0];
     }
 
-    private void setupConnections(){
+    private void setupConnections() {
         createConnectionsBetweenPieces(getAllPieces());
         tiles.addAll(createConnectedSquares(getAllPieces()));
         tiles.addAll(createConnectedTriangles(getAllPieces()));
     }
 
-    private List<Square> createConnectedSquares(Piece[] pieces){
+    private List<Square> createConnectedSquares(Piece[] pieces) {
         String connections = "1-3-4-7 2-3-5-8 6-10-12-16 7-10-13-17 8-11-13-18 9-11-14-19 15-21-24-28" +
                 " 16-21-25-29 17-22-25-30 18-22-26-31 19-23-26-32 20-23-27-33";
 
@@ -71,10 +72,10 @@ public class Field {
 
         List<Square> listOfSquares = new ArrayList<>();
 
-        for(int i = 0;i<allConnectionsSeparated2D.length;i++){
+        for (int i = 0; i < allConnectionsSeparated2D.length; i++) {
             Square square = new Square();
             Square square2 = new Square();
-            for(int j=0;j<allConnectionsSeparated2D[i].length;j++){
+            for (int j = 0; j < allConnectionsSeparated2D[i].length; j++) {
                 square.addPiece(pieces[Integer.parseInt(allConnectionsSeparated2D[i][j])]);
                 square2.addPiece(pieces[pieces.length - 1 - Integer.parseInt(allConnectionsSeparated2D[i][j])]);
             }
@@ -84,7 +85,7 @@ public class Field {
         return listOfSquares;
     }
 
-    private List<Triangle> createConnectedTriangles(Piece[] pieces){
+    private List<Triangle> createConnectedTriangles(Piece[] pieces) {
         HashSet<List<Piece>> triangleValues = new HashSet<>();
         for (int i = 0; i < pieces.length; i++) {
             boolean broken = false;
@@ -100,26 +101,24 @@ public class Field {
                         }
                     }
                 }
-                if (broken) { break; }
+                if (broken) {
+                    break;
+                }
             }
         }
         return createAllTriangles(triangleValues);
     }
 
-    private Triangle createTriangle(List<Piece> listOfPieces){
+    private Triangle createTriangle(List<Piece> listOfPieces) {
         return new Triangle(listOfPieces);
     }
 
-    private List<Triangle> createAllTriangles(HashSet<List<Piece>> setOfTriangles){
+    private List<Triangle> createAllTriangles(HashSet<List<Piece>> setOfTriangles) {
         List<Triangle> triangleList = new ArrayList<>();
-        for(List<Piece> list : setOfTriangles){
+        for (List<Piece> list : setOfTriangles) {
             triangleList.add(createTriangle(list));
         }
         return triangleList;
-    }
-
-    public void addTiles(List<? extends Tile> tiles) {
-        this.tiles.addAll(tiles);
     }
 
     private void createConnectionsBetweenPieces(Piece[] pieces) {
@@ -147,16 +146,16 @@ public class Field {
     public void printField() {
         String prefix = "                                                           ";
         for (int i = 0; i < field.length; i++) {
-            System.out.print((char)((int)'A' + i) + prefix.substring(0,prefix.length()/(field[i].length + 1)));
-            for (int j = 0; j < field[i].length ; j++) {
+            System.out.print((char) ((int) 'A' + i) + prefix.substring(0, prefix.length() / (field[i].length + 1)));
+            for (int j = 0; j < field[i].length; j++) {
                 printCharacter(field[i][j].getPieceType());
-                System.out.print(prefix.substring(0,prefix.length()/(field[i].length + 1)));
+                System.out.print(prefix.substring(0, prefix.length() / (field[i].length + 1)));
             }
             System.out.println();
         }
     }
 
-    private void printCharacter(PieceType pieceType){
+    private void printCharacter(PieceType pieceType) {
         switch (pieceType) {
             case EMPTY:
                 System.out.print(".");
@@ -187,25 +186,23 @@ public class Field {
         return this.field;
     }
 
-    public boolean placePiece(int row, int col) {
-        if(gamePhase != GamePhase.PLACEMENT) {return false;}
+    public boolean placePiece(int row, int col) throws PiecesException, WrongGamePhaseException {
+        if (gamePhase != GamePhase.PLACEMENT) { throw new WrongGamePhaseException(); }
 
         if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) { return false; }
 
-        if (this.field[row][col].getPieceType() != PieceType.EMPTY) {return false;}
+        if (this.field[row][col].getPieceType() != PieceType.EMPTY) { throw new PieceAlreadyOccupiedException();}
 
-        switch (getCurrentPlayer().getColour()) {
-            case BLACK:
-                this.field[row][col].setPieceType(PieceType.BLACK);
-                break;
-            case WHITE:
-                this.field[row][col].setPieceType(PieceType.WHITE);
-                break;
-            default:
-                return false;
+        if (getCurrentPlayer() instanceof BlackPlayer) {
+            this.field[row][col].setPieceType(PieceType.BLACK);
+        } else {
+            this.field[row][col].setPieceType(PieceType.WHITE);
         }
-        if(isSolved()) {this.gameState = GameState.SOLVED;
-                        return true;}
+
+        if (isSolved()) {
+            this.gameState = GameState.SOLVED;
+            return true;
+        }
         getCurrentPlayer().setRemainingPieces(getCurrentPlayer().getRemainingPieces() - 1);
         transitionBetweenPhases();
         return true;
@@ -217,48 +214,49 @@ public class Field {
                 .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
     }
 
-    public void triangleCapture(Piece piece){
+    public void triangleCapture(Piece piece) {
         List<Triangle> triangleList = (List<Triangle>) findTrianglesContainingPiece(piece);
-        for(Triangle triangle : triangleList){
-            if(triangle.isCapturable(getCurrentPlayer())) {
+        for (Triangle triangle : triangleList) {
+            if (triangle.isCapturable(getCurrentPlayer())) {
                 triangle.findCapturablePiece(getCurrentPlayer()).capture();
             }
         }
     }
 
-    private List<? extends Tile> findTrianglesContainingPiece(Piece piece){
+    private List<? extends Tile> findTrianglesContainingPiece(Piece piece) {
         return tiles.stream()
                 .filter(t -> t instanceof Triangle)
                 .filter(t -> t.getPieces().contains(piece))
                 .collect(Collectors.toList());
     }
 
-    public void addTile(Tile tile) {
-        if (!this.tiles.contains(tile)) {
-            this.tiles.add(tile);
-        }
-    }
+    public boolean movePiece(int rowFrom, int colFrom, int rowTo, int colTo) throws PiecesException,WrongGamePhaseException {
+        if (this.gamePhase != GamePhase.MOVEMENT) { throw new WrongGamePhaseException(); }
 
-    public boolean movePiece(int xFrom, int yFrom, int xTo, int yTo) {
-        if(this.gamePhase != GamePhase.MOVEMENT) {return false;}
+        if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {return false;}
+        if (rowTo < 0 || rowTo >= field.length || colTo < 0 || colTo >= field[rowTo].length) {return false;}
+        if (this.field[rowFrom][colFrom].getPieceType() == PieceType.EMPTY) { throw new PieceNotPresentException(); }
+        if (this.field[rowTo][colTo].getPieceType() != PieceType.EMPTY) { throw new PieceAlreadyOccupiedException(); }
+        if (!this.field[rowFrom][colFrom].isConnectedTo(this.field[rowTo][colTo])) { throw new PiecesNotConnectedException(); }
+        if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) { throw new WrongPieceTypeException(); }
 
-        if (this.field[xFrom][yFrom].getPieceType() == PieceType.EMPTY) { return false; }
-        if (this.field[xTo][yTo].getPieceType() != PieceType.EMPTY) { return false; }
-
-        this.field[xFrom][yFrom].setPieceType(PieceType.EMPTY);
+        this.field[rowFrom][colFrom].setPieceType(PieceType.EMPTY);
         if (getCurrentPlayer() instanceof BlackPlayer) {
-            this.field[xTo][yTo].setPieceType(PieceType.BLACK);
+            this.field[rowTo][colTo].setPieceType(PieceType.BLACK);
         } else {
-            this.field[xTo][yTo].setPieceType(PieceType.WHITE);
+            this.field[rowTo][colTo].setPieceType(PieceType.WHITE);
         }
-        triangleCapture(field[xTo][yTo]);
-        if(isSolved()) {this.gameState = GameState.SOLVED;}
+
+        triangleCapture(field[rowTo][colTo]);
+        if (isSolved()) { this.gameState = GameState.SOLVED; }
         return true;
     }
 
-    private void transitionBetweenPhases(){
+    private void transitionBetweenPhases() {
         long placedPieces = Arrays.stream(getAllPieces()).filter(p -> p.getPieceType() != PieceType.EMPTY).count();
-        if(placedPieces == 24) {this.gamePhase = GamePhase.MOVEMENT;}
+        if (placedPieces == 24) {
+            this.gamePhase = GamePhase.MOVEMENT;
+        }
     }
 
     public GamePhase getGamePhase() {

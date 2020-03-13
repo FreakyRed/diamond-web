@@ -3,6 +3,8 @@ package com.company.gamestudio.game.userinterface;
 import com.company.gamestudio.game.core.Field;
 import com.company.gamestudio.game.core.GamePhase;
 import com.company.gamestudio.game.core.GameState;
+import com.company.gamestudio.game.exceptions.gamephase.WrongGamePhaseException;
+import com.company.gamestudio.game.exceptions.pieces.*;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -12,8 +14,8 @@ public class ConsoleUI implements UI {
     private Field field;
     private Scanner scanner = new Scanner(System.in);
 
-    final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("([A-U])([1-6])");
-    final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("(([A-U])([1-6]))(([A-U])([1-6]))");
+    final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("([A-U])([1-9])");
+    final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("(([A-U])([1-9]))(([A-U])([1-9]))");
 
     public ConsoleUI(Field field) {
         this.field = field;
@@ -21,17 +23,17 @@ public class ConsoleUI implements UI {
 
     @Override
     public void run() {
-       do {
-           printField();
-           processInput();
-       }
-       while (field.getGameState() == GameState.PLAYING);
-       printField();
-       printFinalMessage();
+        do {
+            printField();
+            processInput();
+        }
+        while (field.getGameState() == GameState.PLAYING);
+        printField();
+        printFinalMessage();
     }
 
-    private void printFinalMessage(){
-        if(field.getGameState() == GameState.SOLVED){
+    private void printFinalMessage() {
+        if (field.getGameState() == GameState.SOLVED) {
             System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
         }
     }
@@ -54,52 +56,69 @@ public class ConsoleUI implements UI {
 
     private void processInput() {
         if (field.getGamePhase() == GamePhase.PLACEMENT) {
-            processInputPlacement();
+            processInputForPlacementPhase();
         } else {
-            processInputMovement();
+            processInputForMovementPhase();
         }
     }
 
-    private void processInputPlacement() {
+    private void processInputForPlacementPhase() {
         System.out.println("Enter coordinates for placement of your piece (e.g. A1, K3):");
         String line = scanner.nextLine().toUpperCase();
         if (line.equals("EXIT")) {
             System.exit(0);
         }
-
         Matcher m = INPUT_PATTERN_PLACEMENT.matcher(line);
         if (m.matches()) {
             int row = m.group(1).charAt(0) - 65;
             int col = Integer.parseInt(m.group(2)) - 1;
 
-            if (row < 0 || row >= field.getField().length || col < 0 || col >= field.getField()[row].length){
-                System.out.println("Entered coordinates are not within the field");
-                return;
+            String currentPlayer = field.getCurrentPlayer().toString();
+            try {
+                if (field.placePiece(row, col)) {
+                    System.out.println("Placed " + currentPlayer + " piece to " + m.group(1) + m.group(2));
+                } else {
+                    System.out.println("Entered coordinates are not within the field");
+                }
+            } catch (PiecesException | WrongGamePhaseException e) {
+                System.out.println(e.toString());
             }
-
-            if (field.placePiece(row, col)) {
-                System.out.println("Placed " + field.getCurrentPlayer().toString() + " piece to " + m.group(1) + m.group(2));
-            } else {
-                System.out.println("Unable to place your piece (piece is already there)");
-            }
+        } else {
+            System.out.println("Bad input, please try again");
         }
     }
 
-    private void processInputMovement() {
-        System.out.println("Enter a movement command (e.g. A1B2, U1T2):");
-
+    private void processInputForMovementPhase() {
+        System.out.println("Enter coordinates to move piece from position to a new position(e.g. A1B2, U1T2):");
         String line = scanner.nextLine().toUpperCase();
         if (line.equals("EXIT")) {
             System.exit(0);
         }
-
         Matcher m = INPUT_PATTERN_MOVEMENT.matcher(line);
         if (m.matches()) {
-            int row = m.group(2).charAt(0) - 65;
-            int col = Integer.parseInt(m.group(3)) - 1;
-            System.out.println();
+            int rowFrom = m.group(2).charAt(0) - 65;
+            int colFrom = Integer.parseInt(m.group(3)) - 1;
+            int rowTo = m.group(5).charAt(0) - 65;
+            int colTo = Integer.parseInt(m.group(6)) - 1;
+
+            printMessageForEnteredCoordinates(m, rowFrom, colFrom, rowTo, colTo);
         } else {
             System.out.println("Bad input, try again");
         }
     }
+
+    private void printMessageForEnteredCoordinates(Matcher m, int rowFrom, int colFrom, int rowTo, int colTo) {
+
+        String currentPlayer = field.getCurrentPlayer().toString();
+        try {
+            if (field.movePiece(rowFrom, colFrom, rowTo, colTo)) {
+                System.out.println("Moved " + currentPlayer + " piece from " + m.group(2) + m.group(3) + " to " + m.group(5) + m.group(6));
+            } else {
+                System.out.println("Entered coordinates are not within the field");
+            }
+        } catch (PiecesException | WrongGamePhaseException e) {
+            System.out.println(e.toString());
+        }
+    }
 }
+

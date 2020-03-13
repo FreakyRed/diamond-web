@@ -1,7 +1,5 @@
 package com.company.gamestudio.game.core;
 
-import com.company.gamestudio.game.exceptions.WrongPieceTypeException;
-
 import java.util.ArrayList;
 import java.util.List;
 
