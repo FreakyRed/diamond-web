@@ -11,7 +11,8 @@ import java.util.stream.Stream;
 public class Field {
     private Piece[][] field;
     private List<Tile> tiles = new ArrayList<>();
-    private GamePhase gamePhase = GamePhase.Placement;
+    private GamePhase gamePhase = GamePhase.PLACEMENT;
+    private GameState gameState = GameState.PLAYING;
     private Player[] players = new Player[]{new WhitePlayer(),new BlackPlayer()};
     //private Player player;
 
@@ -47,8 +48,8 @@ public class Field {
                 .toArray(Piece[]::new);
     }
 
-    private Player getCurrentPlayer(){
-        return players[0].getRemainingPieces() <= players[1].getRemainingPieces() ? players[0] : players[1];
+    public Player getCurrentPlayer(){
+        return players[0].getRemainingPieces() <= players[1].getRemainingPieces() ? players[1] : players[0];
     }
 
     private void setupConnections(){
@@ -144,20 +145,15 @@ public class Field {
     }
 
     public void printField() {
-        for (int i = 0; i < field.length/2 ; i++){
-            for (int j = 0; j < field[i].length; j++) {
-                System.out.print(getPrefix(field[i].length));
+        String prefix = "                                                           ";
+        for (int i = 0; i < field.length; i++) {
+            System.out.print((char)((int)'A' + i) + prefix.substring(0,prefix.length()/(field[i].length + 1)));
+            for (int j = 0; j < field[i].length ; j++) {
                 printCharacter(field[i][j].getPieceType());
+                System.out.print(prefix.substring(0,prefix.length()/(field[i].length + 1)));
             }
             System.out.println();
         }
-
-        System.out.print("");
-        for(int i=0; i < field[10].length ; i++){
-            System.out.print("      ");
-            printCharacter(field[10][i].getPieceType());
-        }
-        System.out.println();
     }
 
     private void printCharacter(PieceType pieceType){
@@ -166,16 +162,16 @@ public class Field {
                 System.out.print(".");
                 break;
             case RED:
-                System.out.print("R");
+                System.out.print("$");
                 break;
             case BLACK:
-                System.out.print("B");
+                System.out.print("&");
                 break;
             case WHITE:
-                System.out.print("W");
+                System.out.print("#");
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new IllegalStateException();
         }
     }
 
@@ -191,16 +187,14 @@ public class Field {
         return this.field;
     }
 
-    public boolean placePiece(int row, int col, PieceType type) {
-        if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
-            return false;
-        }
+    public boolean placePiece(int row, int col) {
+        if(gamePhase != GamePhase.PLACEMENT) {return false;}
 
-        if (this.field[row][col].getPieceType() != PieceType.EMPTY) {
-            return false;
-        }
+        if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) { return false; }
 
-        switch (type) {
+        if (this.field[row][col].getPieceType() != PieceType.EMPTY) {return false;}
+
+        switch (getCurrentPlayer().getColour()) {
             case BLACK:
                 this.field[row][col].setPieceType(PieceType.BLACK);
                 break;
@@ -210,16 +204,20 @@ public class Field {
             default:
                 return false;
         }
+        if(isSolved()) {this.gameState = GameState.SOLVED;
+                        return true;}
+        getCurrentPlayer().setRemainingPieces(getCurrentPlayer().getRemainingPieces() - 1);
+        transitionBetweenPhases();
         return true;
     }
 
     public boolean isSolved() {
         return tiles.stream()
                 .filter(t -> t instanceof Square)
-                .anyMatch(t -> ((Square) t).filledWithOneColour(PieceType.WHITE));
+                .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
     }
 
-    public void  triangleCapture(Piece piece){
+    public void triangleCapture(Piece piece){
         List<Triangle> triangleList = (List<Triangle>) findTrianglesContainingPiece(piece);
         for(Triangle triangle : triangleList){
             if(triangle.isCapturable(getCurrentPlayer())) {
@@ -242,9 +240,10 @@ public class Field {
     }
 
     public boolean movePiece(int xFrom, int yFrom, int xTo, int yTo) {
-        if (this.field[xFrom][yFrom].getPieceType() == PieceType.EMPTY) {
-            return false;
-        }
+        if(this.gamePhase != GamePhase.MOVEMENT) {return false;}
+
+        if (this.field[xFrom][yFrom].getPieceType() == PieceType.EMPTY) { return false; }
+        if (this.field[xTo][yTo].getPieceType() != PieceType.EMPTY) { return false; }
 
         this.field[xFrom][yFrom].setPieceType(PieceType.EMPTY);
         if (getCurrentPlayer() instanceof BlackPlayer) {
@@ -253,7 +252,20 @@ public class Field {
             this.field[xTo][yTo].setPieceType(PieceType.WHITE);
         }
         triangleCapture(field[xTo][yTo]);
-
+        if(isSolved()) {this.gameState = GameState.SOLVED;}
         return true;
+    }
+
+    private void transitionBetweenPhases(){
+        long placedPieces = Arrays.stream(getAllPieces()).filter(p -> p.getPieceType() != PieceType.EMPTY).count();
+        if(placedPieces == 24) {this.gamePhase = GamePhase.MOVEMENT;}
+    }
+
+    public GamePhase getGamePhase() {
+        return gamePhase;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 }

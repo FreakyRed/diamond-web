@@ -3,6 +3,7 @@ package com.company;
 import com.company.gamestudio.game.core.*;
 import com.company.gamestudio.game.core.players.BlackPlayer;
 import com.company.gamestudio.game.core.players.WhitePlayer;
+import com.company.gamestudio.game.userinterface.ConsoleUI;
 import com.sun.source.tree.WhileLoopTree;
 
 import java.awt.image.AreaAveragingScaleFilter;
@@ -13,11 +14,12 @@ public class Main {
     public static void main(String[] args) {
         Field field = new Field();
 
-        field.placePiece(0, 0, PieceType.WHITE);
-        field.placePiece(20, 0, PieceType.BLACK);
-        field.placePiece(20, 0, PieceType.WHITE);
-        field.printField();
 
+        ConsoleUI consoleUI = new ConsoleUI(field);
+        consoleUI.run();
+        //field.printField();
+
+        /*
         Piece[] pieces = field.getAllPieces();
 
         Triangle triangle = new Triangle(Arrays.asList(pieces[0], pieces[1], pieces[3]));
