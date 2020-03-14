@@ -22,7 +22,7 @@ public class Square extends Tile {
         this.pieces.add(piece);
     }
 
-    public boolean filledWithOneColour(PieceType colour) {
+    boolean filledWithOneColour(PieceType colour) {
         return pieces.stream()
                 .allMatch(p -> p.getPieceType() == colour);
     }

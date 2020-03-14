@@ -1,8 +1,5 @@
 package com.company.gamestudio.game.core;
 
-import com.company.gamestudio.game.core.players.BlackPlayer;
-import com.company.gamestudio.game.core.players.Player;
-import com.company.gamestudio.game.core.players.WhitePlayer;
 import com.company.gamestudio.game.exceptions.gamephase.WrongGamePhaseException;
 import com.company.gamestudio.game.exceptions.pieces.*;
 
@@ -15,7 +12,9 @@ public class Field {
     private List<Tile> tiles = new ArrayList<>();
     private GamePhase gamePhase = GamePhase.MOVEMENT;
     private GameState gameState = GameState.PLAYING;
-    private Player[] players = new Player[]{new WhitePlayer(), new BlackPlayer()};
+    private Player currentPlayer = Player.BLACK;
+
+    private static final int MAX_PIECES = 24;
 
     public Field() {
         field = new Piece[21][];
@@ -50,7 +49,7 @@ public class Field {
     }
 
     public Player getCurrentPlayer() {
-        return players[0].getRemainingPieces() <= players[1].getRemainingPieces() ? players[1] : players[0];
+        return currentPlayer;
     }
 
     private void setupConnections() {
@@ -187,13 +186,19 @@ public class Field {
     }
 
     public boolean placePiece(int row, int col) throws PiecesException, WrongGamePhaseException {
-        if (gamePhase != GamePhase.PLACEMENT) { throw new WrongGamePhaseException(); }
+        if (gamePhase != GamePhase.PLACEMENT) {
+            throw new WrongGamePhaseException();
+        }
 
-        if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) { return false; }
+        if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
+            return false;
+        }
 
-        if (this.field[row][col].getPieceType() != PieceType.EMPTY) { throw new PieceAlreadyOccupiedException();}
+        if (this.field[row][col].getPieceType() != PieceType.EMPTY) {
+            throw new PieceAlreadyOccupiedException();
+        }
 
-        if (getCurrentPlayer() instanceof BlackPlayer) {
+        if (getCurrentPlayer() == Player.BLACK) {
             this.field[row][col].setPieceType(PieceType.BLACK);
         } else {
             this.field[row][col].setPieceType(PieceType.WHITE);
@@ -203,18 +208,18 @@ public class Field {
             this.gameState = GameState.SOLVED;
             return true;
         }
-        getCurrentPlayer().setRemainingPieces(getCurrentPlayer().getRemainingPieces() - 1);
+        changePlayer();
         transitionBetweenPhases();
         return true;
     }
 
-    public boolean isSolved() {
+    private boolean isSolved() {
         return tiles.stream()
                 .filter(t -> t instanceof Square)
                 .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
     }
 
-    public void triangleCapture(Piece piece) {
+    private void triangleCapture(Piece piece) {
         List<Triangle> triangleList = (List<Triangle>) findTrianglesContainingPiece(piece);
         for (Triangle triangle : triangleList) {
             if (triangle.isCapturable(getCurrentPlayer())) {
@@ -230,33 +235,65 @@ public class Field {
                 .collect(Collectors.toList());
     }
 
-    public boolean movePiece(int rowFrom, int colFrom, int rowTo, int colTo) throws PiecesException,WrongGamePhaseException {
-        if (this.gamePhase != GamePhase.MOVEMENT) { throw new WrongGamePhaseException(); }
 
-        if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {return false;}
-        if (rowTo < 0 || rowTo >= field.length || colTo < 0 || colTo >= field[rowTo].length) {return false;}
-        if (this.field[rowFrom][colFrom].getPieceType() == PieceType.EMPTY) { throw new PieceNotPresentException(); }
-        if (this.field[rowTo][colTo].getPieceType() != PieceType.EMPTY) { throw new PieceAlreadyOccupiedException(); }
-        if (!this.field[rowFrom][colFrom].isConnectedTo(this.field[rowTo][colTo])) { throw new PiecesNotConnectedException(); }
-        if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) { throw new WrongPieceTypeException(); }
+    public boolean movePiece(int rowFrom, int colFrom, int rowTo, int colTo) throws PiecesException, WrongGamePhaseException {
+        if (this.gamePhase != GamePhase.MOVEMENT) {
+            throw new WrongGamePhaseException();
+        }
+
+        if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {
+            return false;
+        }
+        if (rowTo < 0 || rowTo >= field.length || colTo < 0 || colTo >= field[rowTo].length) {
+            return false;
+        }
+        if (this.field[rowFrom][colFrom].getPieceType() == PieceType.EMPTY) {
+            throw new PieceNotPresentException();
+        }
+        if (this.field[rowTo][colTo].getPieceType() != PieceType.EMPTY) {
+            throw new PieceAlreadyOccupiedException();
+        }
+        if (!this.field[rowFrom][colFrom].isConnectedTo(this.field[rowTo][colTo])) {
+            throw new PiecesNotConnectedException();
+        }
+        if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) {
+            throw new WrongPieceTypeException();
+        }
 
         this.field[rowFrom][colFrom].setPieceType(PieceType.EMPTY);
-        if (getCurrentPlayer() instanceof BlackPlayer) {
+        if (getCurrentPlayer() == Player.BLACK) {
             this.field[rowTo][colTo].setPieceType(PieceType.BLACK);
         } else {
             this.field[rowTo][colTo].setPieceType(PieceType.WHITE);
         }
 
         triangleCapture(field[rowTo][colTo]);
-        if (isSolved()) { this.gameState = GameState.SOLVED; }
+        if (isSolved()) {
+            this.gameState = GameState.SOLVED;
+            return true;
+        }
+        changePlayer();
         return true;
     }
 
     private void transitionBetweenPhases() {
         long placedPieces = Arrays.stream(getAllPieces()).filter(p -> p.getPieceType() != PieceType.EMPTY).count();
-        if (placedPieces == 24) {
+        if (placedPieces == MAX_PIECES) {
             this.gamePhase = GamePhase.MOVEMENT;
         }
+    }
+
+    public boolean removeRedPiece(int row, int col) {
+
+        if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
+            return false;
+        }
+
+        if (field[row][col].removeRedPiece()) {
+            changePlayer();
+            return true;
+        }
+        return false;
     }
 
     public GamePhase getGamePhase() {
@@ -265,5 +302,9 @@ public class Field {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    private void changePlayer() {
+        currentPlayer = (currentPlayer == Player.BLACK) ? Player.WHITE : Player.BLACK;
     }
 }

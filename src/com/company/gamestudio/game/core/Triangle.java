@@ -1,9 +1,5 @@
 package com.company.gamestudio.game.core;
 
-import com.company.gamestudio.game.core.players.BlackPlayer;
-import com.company.gamestudio.game.core.players.Player;
-import com.company.gamestudio.game.core.players.WhitePlayer;
-
 import java.util.*;
 
 public class Triangle extends Tile {
@@ -14,7 +10,7 @@ public class Triangle extends Tile {
 
     }
 
-    public Triangle(List<Piece> pieces) {
+    Triangle(List<Piece> pieces) {
         this.pieces = pieces;
     }
 
@@ -28,7 +24,7 @@ public class Triangle extends Tile {
         this.pieces.add(piece);
     }
 
-    public boolean isCapturable(Player player) {
+    boolean isCapturable(Player player) {
         int countBlack = 0, countWhite = 0;
         for (Piece piece : pieces) {
             if (piece.getPieceType() == PieceType.BLACK) {
@@ -39,8 +35,8 @@ public class Triangle extends Tile {
             }
         }
 
-        if ((countBlack == 2 && countWhite == 1 && player instanceof BlackPlayer) ||
-                (countBlack == 1 && countWhite == 2 && player instanceof WhitePlayer)) {
+        if ((countBlack == 2 && countWhite == 1 && player == Player.BLACK) ||
+                (countBlack == 1 && countWhite == 2 && player == Player.WHITE)) {
             return true;
         }
 
@@ -48,10 +44,10 @@ public class Triangle extends Tile {
                 .anyMatch(Piece::surroundedByEnemyPieces);
     }
 
-    public Piece findCapturablePiece(Player player) {
+    Piece findCapturablePiece(Player player) {
         if (pieces.stream().anyMatch(Piece::surroundedByEnemyPieces)) {
             return pieces.stream()
-                    .filter(p -> p.surroundedByEnemyPieces())
+                    .filter(Piece::surroundedByEnemyPieces)
                     .findFirst()
                     .get();
         }

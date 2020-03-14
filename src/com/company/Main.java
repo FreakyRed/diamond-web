@@ -1,19 +1,13 @@
 package com.company;
 
 import com.company.gamestudio.game.core.*;
-import com.company.gamestudio.game.core.players.BlackPlayer;
-import com.company.gamestudio.game.core.players.WhitePlayer;
 import com.company.gamestudio.game.userinterface.ConsoleUI;
-import com.sun.source.tree.WhileLoopTree;
-
-import java.awt.image.AreaAveragingScaleFilter;
-import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) {
         Field field = new Field();
-
+        field.getAllPieces()[0].setPieceType(PieceType.RED);
 
         ConsoleUI consoleUI = new ConsoleUI(field);
         consoleUI.run();
