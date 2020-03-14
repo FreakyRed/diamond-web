@@ -7,7 +7,12 @@ public class Main {
 
     public static void main(String[] args) {
         Field field = new Field();
-        field.getAllPieces()[0].setPieceType(PieceType.RED);
+        field.getAllPieces()[0].setPieceType(PieceType.NEUTRAL);
+        field.getAllPieces()[1].setPieceType(PieceType.WHITE);
+        field.getAllPieces()[3].setPieceType(PieceType.BLACK);
+        field.getAllPieces()[30].setPieceType(PieceType.WHITE);
+        field.getAllPieces()[31].setPieceType(PieceType.BLACK);
+        field.getAllPieces()[44].setPieceType(PieceType.BLACK);
 
         ConsoleUI consoleUI = new ConsoleUI(field);
         consoleUI.run();

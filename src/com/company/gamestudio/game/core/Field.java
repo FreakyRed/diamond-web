@@ -159,7 +159,7 @@ public class Field {
             case EMPTY:
                 System.out.print(".");
                 break;
-            case RED:
+            case NEUTRAL:
                 System.out.print("$");
                 break;
             case BLACK:
@@ -283,7 +283,7 @@ public class Field {
         }
     }
 
-    public boolean removeRedPiece(int row, int col) {
+    public boolean removeRedPiece(int row, int col) throws PiecesException{
 
         if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
             return false;

@@ -24,7 +24,7 @@ public class ConsoleUI implements UI {
 
     @Override
     public void run() {
-        //printInfoAboutGame();
+        printInfoAboutGame();
         do {
             printField();
             processInput();
@@ -139,12 +139,37 @@ public class ConsoleUI implements UI {
         int row = matcher.group(3).charAt(0) - 65;
         int col = Integer.parseInt(matcher.group(4)) - 1;
 
-        if(field.removeRedPiece(row,col)) {
-            System.out.println("Removed red piece from " + matcher.group(2));
-        }
-        else {
-            System.out.println("Couldn't remove red piece at " + matcher.group(2) + ", try again");
+        try {
+            if (field.removeRedPiece(row, col)) {
+                System.out.println("Removed red piece from " + matcher.group(2));
+            } else {
+                System.out.println("Couldn't remove red piece at " + matcher.group(2));
+            }
+        } catch (PiecesException e) {
+            System.out.println(e.toString());
         }
     }
+
+    private void printInfoAboutGame() {
+        System.out.println("                    ========= DIAMOND =========");
+        System.out.println("To goal of this game(win condition) is to occupy 4 corners of any square.");
+        System.out.println("Game has two phases: Placement phase and Movement phase");
+        System.out.println("You can only place pieces on to the board during Placement phase.");
+        System.out.println("After placing all 24 pieces(12 each for player), the game proceeds to Movement phase.");
+        System.out.println("During Movement phase, you can either move your piece to new coordinates(if they're connected)\n" +
+                "or you can choose to remove a neutral piece.");
+        System.out.println("Neutral(red) pieces enter the game via captures on triangles.");
+        System.out.println("Neutral pieces can be removed only if there are no adjacent player pieces near");
+        System.out.println("To end the game, write EXIT at any time.");
+
+        pressEnterKeyToContinue();
+    }
+
+    private void pressEnterKeyToContinue() {
+        System.out.println("Press Enter key to continue...");
+        Scanner s = new Scanner(System.in);
+        s.nextLine();
+    }
+
 }
 

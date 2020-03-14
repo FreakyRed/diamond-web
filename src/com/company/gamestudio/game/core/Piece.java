@@ -1,5 +1,9 @@
 package com.company.gamestudio.game.core;
 
+import com.company.gamestudio.game.exceptions.pieces.NeutralPieceAdjacentException;
+import com.company.gamestudio.game.exceptions.pieces.PiecesException;
+import com.company.gamestudio.game.exceptions.pieces.WrongPieceTypeException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +30,7 @@ public class Piece implements Comparable<Piece> {
 
     void capture() {
         if (this.pieceType == PieceType.BLACK || this.pieceType == PieceType.WHITE) {
-            this.setPieceType(PieceType.RED);
+            this.setPieceType(PieceType.NEUTRAL);
         }
     }
 
@@ -35,22 +39,26 @@ public class Piece implements Comparable<Piece> {
             return this.getConnectedPieces().stream()
                     .map(Piece::getPieceType)
                     .allMatch(p -> p == PieceType.WHITE);
-        }
-        else if(pieceType == PieceType.WHITE) {
+        } else if (pieceType == PieceType.WHITE) {
             return this.getConnectedPieces().stream()
                     .map(Piece::getPieceType)
-                    .allMatch(p-> p == PieceType.BLACK);
+                    .allMatch(p -> p == PieceType.BLACK);
         }
 
         return false;
     }
 
-    boolean removeRedPiece() {
-        if (this.getPieceType() == PieceType.RED) {
+    boolean removeRedPiece() throws PiecesException{
+        if (this.pieceType != PieceType.NEUTRAL) {
+            throw new WrongPieceTypeException();
+        }
+        if (getConnectedPieces().stream()
+                .anyMatch(p -> p.getPieceType() == PieceType.WHITE || p.getPieceType() == PieceType.BLACK)) {
+            throw new NeutralPieceAdjacentException();
+        } else {
             this.setPieceType(PieceType.EMPTY);
             return true;
         }
-        return false;
     }
 
     void addConnectedPiece(Piece connectedPiece) {
