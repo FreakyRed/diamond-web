@@ -10,9 +10,10 @@ import java.util.stream.Stream;
 public class Field {
     private Piece[][] field;
     private List<Tile> tiles = new ArrayList<>();
-    private GamePhase gamePhase = GamePhase.MOVEMENT;
+    private GamePhase gamePhase = GamePhase.PLACEMENT;
     private GameState gameState = GameState.PLAYING;
     private Player currentPlayer = Player.BLACK;
+    private static int turnsWithoutCaptureOrRemove = 0;
 
     private static final int MAX_PIECES = 24;
 
@@ -42,7 +43,7 @@ public class Field {
         }
     }
 
-    public Piece[] getAllPieces() {
+    private Piece[] getAllPieces() {
         return Stream.of(field)
                 .flatMap(Stream::of)
                 .toArray(Piece[]::new);
@@ -160,25 +161,17 @@ public class Field {
                 System.out.print(".");
                 break;
             case NEUTRAL:
-                System.out.print("$");
+                System.out.print("#");
                 break;
             case BLACK:
                 System.out.print("&");
                 break;
             case WHITE:
-                System.out.print("#");
+                System.out.print("$");
                 break;
             default:
                 throw new IllegalStateException();
         }
-    }
-
-    private String getPrefix(int number) {
-        String string = "       ";
-        for (int i = 0; i < 10 / number; i++) {
-            string += " ";
-        }
-        return string;
     }
 
     public Piece[][] getField() {
@@ -224,7 +217,9 @@ public class Field {
         for (Triangle triangle : triangleList) {
             if (triangle.isCapturable(getCurrentPlayer())) {
                 triangle.findCapturablePiece(getCurrentPlayer()).capture();
+                turnsWithoutCaptureOrRemove = 0;
             }
+            else{turnsWithoutCaptureOrRemove += 1;}
         }
     }
 
@@ -284,12 +279,12 @@ public class Field {
     }
 
     public boolean removeRedPiece(int row, int col) throws PiecesException{
-
         if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
             return false;
         }
 
         if (field[row][col].removeRedPiece()) {
+            turnsWithoutCaptureOrRemove = 0;
             changePlayer();
             return true;
         }
@@ -307,4 +302,17 @@ public class Field {
     private void changePlayer() {
         currentPlayer = (currentPlayer == Player.BLACK) ? Player.WHITE : Player.BLACK;
     }
+
+    public boolean areDrawConditionsMet(){
+        if(this.gamePhase != GamePhase.MOVEMENT) {return false;}
+        if(turnsWithoutCaptureOrRemove == 50) {return true;}
+        return !isMovePossible();
+    }
+
+    private boolean isMovePossible(){
+        return Arrays.stream(getAllPieces())
+                .filter(p -> p.getPieceType() == getCurrentPlayer().getColour())
+                .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));
+    }
+
 }

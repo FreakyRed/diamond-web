@@ -16,15 +16,11 @@ public class Piece implements Comparable<Piece> {
 
     }
 
-    public Piece(List<Piece> connectedPieces) {
-        this.connectedPieces = connectedPieces;
-    }
-
     PieceType getPieceType() {
         return this.pieceType;
     }
 
-    public void setPieceType(PieceType pieceType) {
+    void setPieceType(PieceType pieceType) {
         this.pieceType = pieceType;
     }
 
