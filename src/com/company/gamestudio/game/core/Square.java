@@ -1,7 +1,6 @@
 package com.company.gamestudio.game.core;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Square extends Tile {

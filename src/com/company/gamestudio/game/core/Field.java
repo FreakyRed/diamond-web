@@ -52,91 +52,6 @@ public class Field {
         return currentPlayer;
     }
 
-
-    public void printField() {
-        printUpperPart();
-        printMiddlePart(24);
-        printLowerPart();
-    }
-
-    private void printUpperPart() {
-        printFirstPart(0, 'A');
-        printSecondPart(4, 'D');
-        printThirdPart(12, 'G');
-    }
-
-    private void printLowerPart() {
-        printThirdPart(38, 'M');
-        printSecondPart(50, 'P');
-        printFirstPart(58, 'S');
-    }
-
-    private void printFirstPart(int i, char symbol) {
-        System.out.print("\u001B[33m");
-        System.out.println(symbol + "                             " + getCharacter(getAllPieces()[i]));
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 1) + "                         " + getCharacter(getAllPieces()[i + 1]) +
-                "       " + getCharacter(getAllPieces()[i + 2]));
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 2) + "                             " + getCharacter(getAllPieces()[i + 3]));
-    }
-
-    private void printSecondPart(int i, char symbol) {
-        System.out.print("\u001B[33m");
-        System.out.println(symbol + "                     " + getCharacter(getAllPieces()[i]) +
-                "               " + getCharacter(getAllPieces()[i + 1]));
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 1) + "                 " + getCharacter(getAllPieces()[i + 2]) + "       " + getCharacter(getAllPieces()[i + 3]) +
-                "       " + getCharacter(getAllPieces()[i + 4]) + "       " + getCharacter(getAllPieces()[i + 5]));
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 2) + "                     " + getCharacter(getAllPieces()[i + 6]) +
-                "               " + getCharacter(getAllPieces()[i + 7]));
-    }
-
-    private void printThirdPart(int i, char symbol) {
-        System.out.print("\u001B[33m");
-        System.out.println(symbol + "              " + getCharacter(getAllPieces()[i]) + "              " +
-                getCharacter(getAllPieces()[i + 1]) + "               " +
-                getCharacter(getAllPieces()[i + 2]) + "             ");
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 1) + "          " + getCharacter(getAllPieces()[i + 3]) +
-                "       " + getCharacter(getAllPieces()[i + 4]) + "     " + getCharacter(getAllPieces()[i + 5]) +
-                "         " + getCharacter(getAllPieces()[i + 6]) + "     " + getCharacter(getAllPieces()[i + 7]) +
-                "        " + getCharacter(getAllPieces()[i + 8]));
-        System.out.print("\u001B[33m");
-        System.out.println((char) (symbol + 2) + "              " + getCharacter(getAllPieces()[i + 9]) +
-                "              " + getCharacter(getAllPieces()[i + 10]) +
-                "               " + getCharacter(getAllPieces()[i + 11]));
-    }
-
-    private void printMiddlePart(int i) {
-        System.out.print("\u001B[33m");
-        System.out.println("J       " + getCharacter(getAllPieces()[i]) + "              " + getCharacter(getAllPieces()[i + 1]) +
-                "               " + getCharacter(getAllPieces()[i + 2]) + "               " + getCharacter(getAllPieces()[i + 3]));
-        System.out.print("\u001B[33m");
-        System.out.println("K            " + getCharacter(getAllPieces()[i + 4]) + "     " + getCharacter(getAllPieces()[i + 5]) +
-                "        " + getCharacter(getAllPieces()[i + 6]) + "     " + getCharacter(getAllPieces()[i + 7]) +
-                "         " + getCharacter(getAllPieces()[i + 8]) + "     " + getCharacter(getAllPieces()[i + 9]));
-        System.out.print("\u001B[33m");
-        System.out.println("L       " + getCharacter(getAllPieces()[i + 10]) + "              " + getCharacter(getAllPieces()[i + 11]) +
-                "               " + getCharacter(getAllPieces()[i + 12]) + "               " + getCharacter(getAllPieces()[i + 13]));
-    }
-
-    private String getCharacter(Piece pieceType) {
-        switch (pieceType.getPieceType()) {
-            case EMPTY:
-                return ("\u001B[34m" + "." + "\u001B[0m");
-            case NEUTRAL:
-                return ("\u001B[31m" + "#" + "\u001B[0m");
-            case BLACK:
-                return ("\u001B[37m" + "&" + "\u001B[0m");
-            case WHITE:
-                return ("\u001B[30m" + "$" + "\u001B[0m");
-            default:
-                throw new IllegalStateException();
-        }
-    }
-
     public Piece[][] getField() {
         return this.field;
     }
@@ -281,6 +196,34 @@ public class Field {
         return Arrays.stream(getAllPieces())
                 .filter(p -> p.getPieceType() == getCurrentPlayer().getColour())
                 .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));
+    }
+
+    public String[] getSquareCoordinates(){
+        StringBuilder stringBuilder = new StringBuilder();
+        tiles.getTileList().stream()
+                .filter(t -> t instanceof Square)
+                .map(s -> s.getPieces())
+                .forEach(p -> findPositionInField(p,stringBuilder));
+
+        String[] squareCoordinates = stringBuilder.toString().split(" ");
+        Arrays.sort(squareCoordinates);
+        return squareCoordinates;
+    }
+
+    private void findPositionInField(List<Piece> pieceList,StringBuilder stringBuilder){
+
+        for(Piece piece:pieceList){
+            for(int row=0;row<getField().length;row++){
+                for(int col=0;col<getField()[row].length;col++){
+                    if(getField()[row][col] == piece) {
+                        stringBuilder.append((char)(row +'A'));
+                        stringBuilder.append((col + 1));
+                        break;
+                    }
+                }
+            }
+        }
+        stringBuilder.append(" ");
     }
 
 }

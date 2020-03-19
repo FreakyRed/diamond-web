@@ -16,7 +16,7 @@ public class Piece implements Comparable<Piece> {
 
     }
 
-    PieceType getPieceType() {
+    public PieceType getPieceType() {
         return this.pieceType;
     }
 

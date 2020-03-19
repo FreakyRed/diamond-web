@@ -1,26 +1,20 @@
 package com.company.gamestudio.game.userinterface;
 
 import com.company.gamestudio.game.core.Field;
-import com.company.gamestudio.game.core.GamePhase;
 import com.company.gamestudio.game.core.GameState;
-import com.company.gamestudio.game.core.Player;
-import com.company.gamestudio.game.exceptions.gamephase.WrongGamePhaseException;
-import com.company.gamestudio.game.exceptions.pieces.*;
+import com.company.gamestudio.game.core.Piece;
+import com.company.gamestudio.game.userinterface.inputhandlers.ConsoleInputHandler;
+import com.company.gamestudio.game.userinterface.inputhandlers.InputHandler;
 
 import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ConsoleUI implements UI {
     private Field field;
-    private Scanner scanner = new Scanner(System.in);
-
-    private final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("\\s*([A-U])([1-9])\\s*");
-    private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
-    private final Pattern INPUT_PATTERN_REMOVE = Pattern.compile("\\s*(R)(([A-U])([1-9]))\\s*");
+    private InputHandler inputHandler;
 
     public ConsoleUI(Field field) {
         this.field = field;
+        this.inputHandler = new ConsoleInputHandler(field);
     }
 
     @Override
@@ -28,7 +22,8 @@ public class ConsoleUI implements UI {
         printInfoAboutGame();
         do {
             printField();
-            processInput();
+            printSquareCoordinates();
+            handleInput();
         }
         while (field.getGameState() == GameState.PLAYING && !field.areDrawConditionsMet());
         printField();
@@ -46,120 +41,120 @@ public class ConsoleUI implements UI {
         }
     }
 
+    private void printGameDetails() {
+        System.out.print("\u001B[34mGamephase: \u001B[0m" + field.getGamePhase() +
+                "          " + "\u001B[34mCurrent Player: \u001B[0m" + field.getCurrentPlayer().toString());
+        System.out.print("(" + getSymbolForPlayer() + ")\n");
+    }
+
     private void printField() {
-        printGameInfo();
+        printGameDetails();
         printFieldBody();
     }
 
-    private void printGameInfo() {
-        System.out.print("\u001B[34mGamephase: \u001B[0m" + field.getGamePhase() +
-                "          " + "\u001B[34mCurrent Player: \u001B[0m" + field.getCurrentPlayer().toString());
-        System.out.print("(" + field.getCurrentPlayer().getSymbol() + ")\n");
-    }
-
-    private void printFieldBody() {
+    private void printFieldBody(){
         System.out.println("\u001B[33m==========================================================\u001B[0m");
-        field.printField();
+        printUpperPart();
+        printMiddlePart(9);
+        printLowerPart();
         System.out.println("\u001B[33m==========================================================\u001B[0m");
     }
 
-    private void processInput() {
-        if (field.getGamePhase() == GamePhase.PLACEMENT) {
-            processInputForPlacementPhase();
-        } else {
-            processInputForMovementPhase();
+    private void printUpperPart() {
+        printFirstPart(0, 'A');
+        printSecondPart(3, 'D');
+        printThirdPart(6, 'G');
+    }
+
+    private void printLowerPart() {
+        printThirdPart(12, 'M');
+        printSecondPart(15, 'P');
+        printFirstPart(18, 'S');
+    }
+
+    private void printFirstPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "                             " + getCharacter(field.getField()[i][0]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "                         " + getCharacter(field.getField()[i + 1][0]) +
+                "       " + getCharacter(field.getField()[i + 1][1]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "                             " + getCharacter(field.getField()[i + 2][0]));
+    }
+
+    private void printSecondPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "                     " + getCharacter(field.getField()[i][0]) +
+                "               " + getCharacter(field.getField()[i][1]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "                 " + getCharacter(field.getField()[i + 1][0]) +
+                "       " + getCharacter(field.getField()[i + 1][1]) + "       " + getCharacter(field.getField()[i + 1][2]) +
+                "       " + getCharacter(field.getField()[i + 1][3]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "                     " + getCharacter(field.getField()[i + 2][0]) +
+                "               " + getCharacter(field.getField()[i + 2][1]));
+    }
+
+    private void printThirdPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "              " + getCharacter(field.getField()[i][0]) + "              " +
+                getCharacter(field.getField()[i][1]) + "               " +
+                getCharacter(field.getField()[i][2]) + "             ");
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "          " + getCharacter(field.getField()[i + 1][0]) +
+                "       " + getCharacter(field.getField()[i + 1][1]) + "     " + getCharacter(field.getField()[i + 1][2]) +
+                "         " + getCharacter(field.getField()[i + 1][3]) + "     " + getCharacter(field.getField()[i + 1][4]) +
+                "        " + getCharacter(field.getField()[i + 1][5]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "              " + getCharacter(field.getField()[i + 2][0]) +
+                "              " + getCharacter(field.getField()[i + 2][1]) +
+                "               " + getCharacter(field.getField()[i + 2][2]));
+    }
+
+    private void printMiddlePart(int i) {
+        System.out.print("\u001B[33m");
+        System.out.println("J       " + getCharacter(field.getField()[i][0]) + "              " + getCharacter(field.getField()[i][1]) +
+                "               " + getCharacter(field.getField()[i][2]) + "               " + getCharacter(field.getField()[i][3]));
+        System.out.print("\u001B[33m");
+        System.out.println("K          " + getCharacter(field.getField()[i+1][0]) + "      " + getCharacter(field.getField()[i+1][1]) +
+                "       " + getCharacter(field.getField()[i+1][2]) + "       " + getCharacter(field.getField()[i+1][3]) +
+                "        " + getCharacter(field.getField()[i+1][4]) + "       " + getCharacter(field.getField()[i+1][5]));
+        System.out.print("\u001B[33m");
+        System.out.println("L       " + getCharacter(field.getField()[i+2][0]) + "              " + getCharacter(field.getField()[i+2][1]) +
+                "               " + getCharacter(field.getField()[i +2][2]) + "               " + getCharacter(field.getField()[i +2][3]));
+    }
+
+    private String getCharacter(Piece piece) {
+        switch (piece.getPieceType()) {
+            case EMPTY:
+                return ("\u001B[34m" + "." + "\u001B[0m");
+            case NEUTRAL:
+                return ("\u001B[31m" + "#" + "\u001B[0m");
+            case BLACK:
+                return ("\u001B[37m" + "&" + "\u001B[0m");
+            case WHITE:
+                return ("\u001B[30m" + "$" + "\u001B[0m");
+            default:
+                throw new IllegalStateException();
         }
     }
 
-    private void processInputForPlacementPhase() {
-        System.out.println("Enter coordinates for placement of your piece (e.g. A1, K3):");
-        String line = scanner.nextLine().toUpperCase();
-        if (line.equals("EXIT")) {
-            System.exit(0);
-        }
-        Matcher m = INPUT_PATTERN_PLACEMENT.matcher(line);
-
-        if (m.matches()) {
-            parseInputAndPlacePiece(m);
-        } else {
-            System.out.println("Bad input, please try again");
+    private String getSymbolForPlayer(){
+        switch (field.getCurrentPlayer()){
+            case BLACK:
+                return ("\u001B[37m" + "&" + "\u001B[0m");
+            case WHITE:
+                return ("\u001B[30m" + "$" + "\u001B[0m");
+            default: throw new IllegalStateException();
         }
     }
 
-    private void parseInputAndPlacePiece(Matcher m) {
-        int row = m.group(1).charAt(0) - 65;
-        int col = Integer.parseInt(m.group(2)) - 1;
-
-        String currentPlayer = field.getCurrentPlayer().toString() + "(" + field.getCurrentPlayer().getSymbol() + ")";
-        try {
-            if (field.placePiece(row, col)) {
-                System.out.println("Placed " + currentPlayer + " piece to " + m.group(1) + m.group(2));
-            } else {
-                System.out.println("Entered coordinates are not within the field");
-            }
-        } catch (PiecesException | WrongGamePhaseException e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    private void processInputForMovementPhase() {
-        System.out.println("Choose to remove red piece (e.g. RK1) or move your to a new position (e.g. MA1B2, MU1T2):");
-        String line = scanner.nextLine().toUpperCase();
-        if (line.equals("EXIT")) {
-            System.exit(0);
-        }
-        Matcher m = INPUT_PATTERN_MOVEMENT.matcher(line);
-        Matcher r = INPUT_PATTERN_REMOVE.matcher(line);
-
-        if (m.matches()) {
-            parseInputForMovementPhaseAndMove(m);
-        } else if (r.matches()) {
-            parseInputForRemovingAndRemove(r);
-        } else {
-            System.out.println("Bad input, try again");
-        }
-    }
-
-    private void parseInputForMovementPhaseAndMove(Matcher matcher) {
-        int rowFrom = matcher.group(3).charAt(0) - 65;
-        int colFrom = Integer.parseInt(matcher.group(4)) - 1;
-        int rowTo = matcher.group(6).charAt(0) - 65;
-        int colTo = Integer.parseInt(matcher.group(7)) - 1;
-
-        moveAndPrintMessage(matcher, rowFrom, colFrom, rowTo, colTo);
-    }
-
-    private void moveAndPrintMessage(Matcher matcher, int rowFrom, int colFrom, int rowTo, int colTo) {
-        Player currentPlayer = field.getCurrentPlayer();
-        try {
-            if (field.movePiece(rowFrom, colFrom, rowTo, colTo)) {
-                System.out.println("Moved " + currentPlayer.toString() + "(" + currentPlayer.getSymbol() + ")"
-                        + " piece from " + matcher.group(2) + " to " + matcher.group(5));
-            } else {
-                System.out.println("Entered coordinates are not within the field");
-            }
-        } catch (PiecesException | WrongGamePhaseException e) {
-            System.out.println(e.toString());
-        }
-    }
-
-    private void parseInputForRemovingAndRemove(Matcher matcher) {
-        int row = matcher.group(3).charAt(0) - 65;
-        int col = Integer.parseInt(matcher.group(4)) - 1;
-
-        try {
-            if (field.removeRedPiece(row, col)) {
-                System.out.println("Removed red piece from " + matcher.group(2));
-            } else {
-                System.out.println("Couldn't remove red piece at " + matcher.group(2));
-            }
-        } catch (PiecesException e) {
-            System.out.println(e.toString());
-        }
+    private void handleInput() {
+        inputHandler.handleInput();
     }
 
     private void printInfoAboutGame() {
-        System.out.println("\n\u001B[33m                    ========= DIAMOND =========\u001B[0m");
+        System.out.println("\n\u001B[33m         ========= DIAMOND =========\u001B[0m");
         System.out.println("The goal of this game(win condition) is to occupy 4 corners of any square.");
         System.out.println("Game has two phases: Placement phase and Movement phase");
         System.out.println("You can only place pieces on to the board during Placement phase.");
@@ -177,12 +172,12 @@ public class ConsoleUI implements UI {
 
     private void pressEnterKeyToContinue() {
         System.out.println("Press Enter key to continue...");
-        scanner.nextLine();
+        new Scanner(System.in).nextLine();
     }
 
     private void playAgain() {
         System.out.println("Would you like to play again? [Yes/No]");
-        String answer = scanner.nextLine().toUpperCase();
+        String answer = new Scanner(System.in).nextLine().toUpperCase();
 
         switch (answer) {
             case "YES":
@@ -200,5 +195,15 @@ public class ConsoleUI implements UI {
         }
     }
 
+    private void printSquareCoordinates() {
+        System.out.println("Squares:");
+        for (int i = 0; i < field.getSquareCoordinates().length; i++) {
+            System.out.print(field.getSquareCoordinates()[i] + " ");
+            if (i % 8 == 0 && i != 0) {
+                System.out.println();
+            }
+        }
+        System.out.println();
+    }
 }
 

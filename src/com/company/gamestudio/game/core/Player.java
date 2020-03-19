@@ -10,12 +10,4 @@ public enum Player {
             return PieceType.WHITE;
         }
     }
-
-    public String getSymbol() {
-        if (this == BLACK) {
-            return "&";
-        } else {
-            return "\u001B[30m$\u001B[0m";
-        }
-    }
 }

@@ -2,11 +2,11 @@ package com.company.gamestudio.game.core;
 
 import java.util.*;
 
-public class Tiles {
+class Tiles {
     private List<Tile> tileList = new ArrayList<>();
     private Piece[] pieces;
 
-    public Tiles(Piece[] pieces) {
+    Tiles(Piece[] pieces) {
         this.pieces = pieces;
         setup();
     }
@@ -83,9 +83,7 @@ public class Tiles {
                         }
                     }
                 }
-                if (broken) {
-                    break;
-                }
+                if (broken) { break; }
             }
         }
         return createAllTriangles(triangleValues);
@@ -103,7 +101,7 @@ public class Tiles {
         return new Triangle(listOfPieces);
     }
 
-    public List<Tile> getTileList() {
+    List<Tile> getTileList() {
         return tileList;
     }
 }
