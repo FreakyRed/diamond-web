@@ -52,15 +52,15 @@ public class ConsoleUI implements UI {
     }
 
     private void printGameInfo() {
-        System.out.print("Gamephase: " + field.getGamePhase() +
-                "          " + "Current Player: " + field.getCurrentPlayer().toString());
+        System.out.print("\u001B[34mGamephase: \u001B[0m" + field.getGamePhase() +
+                "          " + "\u001B[34mCurrent Player: \u001B[0m" + field.getCurrentPlayer().toString());
         System.out.print("(" + field.getCurrentPlayer().getSymbol() + ")\n");
     }
 
     private void printFieldBody() {
-        System.out.println("=======================================================");
+        System.out.println("\u001B[33m==========================================================\u001B[0m");
         field.printField();
-        System.out.println("=======================================================");
+        System.out.println("\u001B[33m==========================================================\u001B[0m");
     }
 
     private void processInput() {
@@ -112,7 +112,7 @@ public class ConsoleUI implements UI {
         Matcher r = INPUT_PATTERN_REMOVE.matcher(line);
 
         if (m.matches()) {
-            parseInputForMovementAndMove(m);
+            parseInputForMovementPhaseAndMove(m);
         } else if (r.matches()) {
             parseInputForRemovingAndRemove(r);
         } else {
@@ -120,16 +120,16 @@ public class ConsoleUI implements UI {
         }
     }
 
-    private void parseInputForMovementAndMove(Matcher matcher) {
+    private void parseInputForMovementPhaseAndMove(Matcher matcher) {
         int rowFrom = matcher.group(3).charAt(0) - 65;
         int colFrom = Integer.parseInt(matcher.group(4)) - 1;
         int rowTo = matcher.group(6).charAt(0) - 65;
         int colTo = Integer.parseInt(matcher.group(7)) - 1;
 
-        tryToMoveAndPrintMessage(matcher, rowFrom, colFrom, rowTo, colTo);
+        moveAndPrintMessage(matcher, rowFrom, colFrom, rowTo, colTo);
     }
 
-    private void tryToMoveAndPrintMessage(Matcher matcher, int rowFrom, int colFrom, int rowTo, int colTo) {
+    private void moveAndPrintMessage(Matcher matcher, int rowFrom, int colFrom, int rowTo, int colTo) {
         Player currentPlayer = field.getCurrentPlayer();
         try {
             if (field.movePiece(rowFrom, colFrom, rowTo, colTo)) {
@@ -159,7 +159,7 @@ public class ConsoleUI implements UI {
     }
 
     private void printInfoAboutGame() {
-        System.out.println("                    ========= DIAMOND =========\n");
+        System.out.println("\n\u001B[33m                    ========= DIAMOND =========\u001B[0m");
         System.out.println("The goal of this game(win condition) is to occupy 4 corners of any square.");
         System.out.println("Game has two phases: Placement phase and Movement phase");
         System.out.println("You can only place pieces on to the board during Placement phase.");

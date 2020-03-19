@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Field {
-    private Piece[][] field;
-    private List<Tile> tiles = new ArrayList<>();
+    private Piece[][] field = new Piece[21][];
+    private Tiles tiles;
     private GamePhase gamePhase = GamePhase.PLACEMENT;
     private GameState gameState = GameState.PLAYING;
     private Player currentPlayer = Player.BLACK;
@@ -18,14 +18,13 @@ public class Field {
     private static final int MAX_PIECES = 24;
 
     public Field() {
-        field = new Piece[21][];
         initializeField();
+        tiles = new Tiles(getAllPieces());
     }
 
     private void initializeField() {
         createJaggedField();
         fillField();
-        setupConnections();
     }
 
     private void createJaggedField() {
@@ -53,122 +52,86 @@ public class Field {
         return currentPlayer;
     }
 
-    private void setupConnections() {
-        createConnectionsBetweenPieces(getAllPieces());
-        tiles.addAll(createConnectedSquares(getAllPieces()));
-        tiles.addAll(createConnectedTriangles(getAllPieces()));
-    }
-
-    private List<Square> createConnectedSquares(Piece[] pieces) {
-        String connections = "1-3-4-7 2-3-5-8 6-10-12-16 7-10-13-17 8-11-13-18 9-11-14-19 15-21-24-28" +
-                " 16-21-25-29 17-22-25-30 18-22-26-31 19-23-26-32 20-23-27-33";
-
-        String[] allConnectionsSeparated = connections.split(" ");
-        String[][] allConnectionsSeparated2D = new String[allConnectionsSeparated.length][];
-
-        for (int i = 0; i < allConnectionsSeparated.length; i++) {
-            allConnectionsSeparated2D[i] = allConnectionsSeparated[i].split("-");
-        }
-
-        List<Square> listOfSquares = new ArrayList<>();
-
-        for (int i = 0; i < allConnectionsSeparated2D.length; i++) {
-            Square square = new Square();
-            Square square2 = new Square();
-            for (int j = 0; j < allConnectionsSeparated2D[i].length; j++) {
-                square.addPiece(pieces[Integer.parseInt(allConnectionsSeparated2D[i][j])]);
-                square2.addPiece(pieces[pieces.length - 1 - Integer.parseInt(allConnectionsSeparated2D[i][j])]);
-            }
-            listOfSquares.add(square);
-            listOfSquares.add(square2);
-        }
-        return listOfSquares;
-    }
-
-    private List<Triangle> createConnectedTriangles(Piece[] pieces) {
-        HashSet<List<Piece>> triangleValues = new HashSet<>();
-        for (int i = 0; i < pieces.length; i++) {
-            boolean broken = false;
-            for (int j = 0; j < pieces[i].getConnectedPieces().size(); j++) {
-                for (int k = 0; k < pieces[i].getConnectedPieces().get(j).getConnectedPieces().size(); k++) {
-                    if (pieces[i].isConnectedTo(pieces[i].getConnectedPieces().get(j).getConnectedPieces().get(k))) {
-                        List<Piece> pieceList = Arrays.asList(pieces[i], pieces[i].getConnectedPieces().get(j),
-                                pieces[i].getConnectedPieces().get(j).getConnectedPieces().get(k));
-                        Collections.sort(pieceList, Piece::compareTo);
-                        if (!triangleValues.contains(pieceList)) {
-                            triangleValues.add(pieceList);
-                            broken = true;
-                        }
-                    }
-                }
-                if (broken) {
-                    break;
-                }
-            }
-        }
-        return createAllTriangles(triangleValues);
-    }
-
-    private Triangle createTriangle(List<Piece> listOfPieces) {
-        return new Triangle(listOfPieces);
-    }
-
-    private List<Triangle> createAllTriangles(HashSet<List<Piece>> setOfTriangles) {
-        List<Triangle> triangleList = new ArrayList<>();
-        for (List<Piece> list : setOfTriangles) {
-            triangleList.add(createTriangle(list));
-        }
-        return triangleList;
-    }
-
-    private void createConnectionsBetweenPieces(Piece[] pieces) {
-        String connections = "1-2-3 0-3-4 0-3-5 0-1-2-7-8 1-6-7-10 2-8-9-11 4-10-12 3-4-8-10-13 3-5-7-11-13 5-11-14" +
-                " 4-6-7-16-17 5-8-9-18-19 6-15-16-21 7-8-17-18-22 9-19-20-23 12-21-24 10-12-17-21-25 10-13-16-22-18-25 11-13-22-19-26" +
-                " 11-14-18-23-26 14-23-27 12-15-16-28-29 13-17-18-30-31 14-19-20-32-33 15-28-34 16-17-29-30-35 18-19-31-32-36" +
-                " 20-33-37 24-21-29-34-38 21-28-25-35-38 25-22-31-39-35";
-
-        String[] allConnectionsSeparated = connections.split(" ");
-        String[][] allConnectionsSeparated2D = new String[allConnectionsSeparated.length][];
-
-        for (int i = 0; i < allConnectionsSeparated.length; i++) {
-            allConnectionsSeparated2D[i] = allConnectionsSeparated[i].split("-");
-        }
-
-        for (int i = 0; i < allConnectionsSeparated2D.length; i++) {
-            for (int j = 0; j < allConnectionsSeparated2D[i].length; j++) {
-                pieces[i].addConnectedPiece(pieces[Integer.parseInt(allConnectionsSeparated2D[i][j])]);
-                pieces[pieces.length - 1 - i]
-                        .addConnectedPiece(pieces[pieces.length - 1 - Integer.parseInt(allConnectionsSeparated2D[i][j])]);
-            }
-        }
-    }
 
     public void printField() {
-        String prefix = "                                                           ";
-        for (int i = 0; i < field.length; i++) {
-            System.out.print((char) ((int) 'A' + i) + prefix.substring(0, prefix.length() / (field[i].length + 1)));
-            for (int j = 0; j < field[i].length; j++) {
-                printCharacter(field[i][j].getPieceType());
-                System.out.print(prefix.substring(0, prefix.length() / (field[i].length + 1)));
-            }
-            System.out.println();
-        }
+        printUpperPart();
+        printMiddlePart(24);
+        printLowerPart();
     }
 
-    private void printCharacter(PieceType pieceType) {
-        switch (pieceType) {
+    private void printUpperPart() {
+        printFirstPart(0, 'A');
+        printSecondPart(4, 'D');
+        printThirdPart(12, 'G');
+    }
+
+    private void printLowerPart() {
+        printThirdPart(38, 'M');
+        printSecondPart(50, 'P');
+        printFirstPart(58, 'S');
+    }
+
+    private void printFirstPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "                             " + getCharacter(getAllPieces()[i]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "                         " + getCharacter(getAllPieces()[i + 1]) +
+                "       " + getCharacter(getAllPieces()[i + 2]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "                             " + getCharacter(getAllPieces()[i + 3]));
+    }
+
+    private void printSecondPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "                     " + getCharacter(getAllPieces()[i]) +
+                "               " + getCharacter(getAllPieces()[i + 1]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "                 " + getCharacter(getAllPieces()[i + 2]) + "       " + getCharacter(getAllPieces()[i + 3]) +
+                "       " + getCharacter(getAllPieces()[i + 4]) + "       " + getCharacter(getAllPieces()[i + 5]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "                     " + getCharacter(getAllPieces()[i + 6]) +
+                "               " + getCharacter(getAllPieces()[i + 7]));
+    }
+
+    private void printThirdPart(int i, char symbol) {
+        System.out.print("\u001B[33m");
+        System.out.println(symbol + "              " + getCharacter(getAllPieces()[i]) + "              " +
+                getCharacter(getAllPieces()[i + 1]) + "               " +
+                getCharacter(getAllPieces()[i + 2]) + "             ");
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 1) + "          " + getCharacter(getAllPieces()[i + 3]) +
+                "       " + getCharacter(getAllPieces()[i + 4]) + "     " + getCharacter(getAllPieces()[i + 5]) +
+                "         " + getCharacter(getAllPieces()[i + 6]) + "     " + getCharacter(getAllPieces()[i + 7]) +
+                "        " + getCharacter(getAllPieces()[i + 8]));
+        System.out.print("\u001B[33m");
+        System.out.println((char) (symbol + 2) + "              " + getCharacter(getAllPieces()[i + 9]) +
+                "              " + getCharacter(getAllPieces()[i + 10]) +
+                "               " + getCharacter(getAllPieces()[i + 11]));
+    }
+
+    private void printMiddlePart(int i) {
+        System.out.print("\u001B[33m");
+        System.out.println("J       " + getCharacter(getAllPieces()[i]) + "              " + getCharacter(getAllPieces()[i + 1]) +
+                "               " + getCharacter(getAllPieces()[i + 2]) + "               " + getCharacter(getAllPieces()[i + 3]));
+        System.out.print("\u001B[33m");
+        System.out.println("K            " + getCharacter(getAllPieces()[i + 4]) + "     " + getCharacter(getAllPieces()[i + 5]) +
+                "        " + getCharacter(getAllPieces()[i + 6]) + "     " + getCharacter(getAllPieces()[i + 7]) +
+                "         " + getCharacter(getAllPieces()[i + 8]) + "     " + getCharacter(getAllPieces()[i + 9]));
+        System.out.print("\u001B[33m");
+        System.out.println("L       " + getCharacter(getAllPieces()[i + 10]) + "              " + getCharacter(getAllPieces()[i + 11]) +
+                "               " + getCharacter(getAllPieces()[i + 12]) + "               " + getCharacter(getAllPieces()[i + 13]));
+    }
+
+    private String getCharacter(Piece pieceType) {
+        switch (pieceType.getPieceType()) {
             case EMPTY:
-                System.out.print(".");
-                break;
+                return ("\u001B[34m" + "." + "\u001B[0m");
             case NEUTRAL:
-                System.out.print("#");
-                break;
+                return ("\u001B[31m" + "#" + "\u001B[0m");
             case BLACK:
-                System.out.print("&");
-                break;
+                return ("\u001B[37m" + "&" + "\u001B[0m");
             case WHITE:
-                System.out.print("$");
-                break;
+                return ("\u001B[30m" + "$" + "\u001B[0m");
             default:
                 throw new IllegalStateException();
         }
@@ -207,31 +170,32 @@ public class Field {
     }
 
     private boolean isSolved() {
-        return tiles.stream()
+        return tiles.getTileList().stream()
                 .filter(t -> t instanceof Square)
                 .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
     }
 
-    private void triangleCapture(Piece piece) {
+    private void capturePieceWithinTriangle(Piece piece) {
         List<Triangle> triangleList = (List<Triangle>) findTrianglesContainingPiece(piece);
         for (Triangle triangle : triangleList) {
             if (triangle.isCapturable(getCurrentPlayer())) {
                 triangle.findCapturablePiece(getCurrentPlayer()).capture();
                 turnsWithoutCaptureOrRemove = 0;
+            } else {
+                turnsWithoutCaptureOrRemove += 1;
             }
-            else{turnsWithoutCaptureOrRemove += 1;}
         }
     }
 
     private List<? extends Tile> findTrianglesContainingPiece(Piece piece) {
-        return tiles.stream()
+        return tiles.getTileList().stream()
                 .filter(t -> t instanceof Triangle)
                 .filter(t -> t.getPieces().contains(piece))
                 .collect(Collectors.toList());
     }
 
-
-    public boolean movePiece(int rowFrom, int colFrom, int rowTo, int colTo) throws PiecesException, WrongGamePhaseException {
+    public boolean movePiece(int rowFrom, int colFrom, int rowTo, int colTo) throws
+            PiecesException, WrongGamePhaseException {
         if (this.gamePhase != GamePhase.MOVEMENT) {
             throw new WrongGamePhaseException();
         }
@@ -262,7 +226,7 @@ public class Field {
             this.field[rowTo][colTo].setPieceType(PieceType.WHITE);
         }
 
-        triangleCapture(field[rowTo][colTo]);
+        capturePieceWithinTriangle(field[rowTo][colTo]);
         if (isSolved()) {
             this.gameState = GameState.SOLVED;
             return true;
@@ -278,7 +242,7 @@ public class Field {
         }
     }
 
-    public boolean removeRedPiece(int row, int col) throws PiecesException{
+    public boolean removeRedPiece(int row, int col) throws PiecesException {
         if (row < 0 || row >= field.length || col < 0 || col >= field[row].length) {
             return false;
         }
@@ -303,13 +267,17 @@ public class Field {
         currentPlayer = (currentPlayer == Player.BLACK) ? Player.WHITE : Player.BLACK;
     }
 
-    public boolean areDrawConditionsMet(){
-        if(this.gamePhase != GamePhase.MOVEMENT) {return false;}
-        if(turnsWithoutCaptureOrRemove == 50) {return true;}
+    public boolean areDrawConditionsMet() {
+        if (this.gamePhase != GamePhase.MOVEMENT) {
+            return false;
+        }
+        if (turnsWithoutCaptureOrRemove == 50) {
+            return true;
+        }
         return !isMovePossible();
     }
 
-    private boolean isMovePossible(){
+    private boolean isMovePossible() {
         return Arrays.stream(getAllPieces())
                 .filter(p -> p.getPieceType() == getCurrentPlayer().getColour())
                 .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));

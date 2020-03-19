@@ -15,7 +15,7 @@ public enum Player {
         if (this == BLACK) {
             return "&";
         } else {
-            return "$";
+            return "\u001B[30m$\u001B[0m";
         }
     }
 }
