@@ -18,7 +18,7 @@ public class ConsoleInputHandler implements InputHandler {
     private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
     private final Pattern INPUT_PATTERN_REMOVE = Pattern.compile("\\s*(R)(([A-U])([1-9]))\\s*");
 
-    public ConsoleInputHandler(Field field){
+    public ConsoleInputHandler(Field field) {
         this.field = field;
     }
 
@@ -32,7 +32,7 @@ public class ConsoleInputHandler implements InputHandler {
     }
 
     private void handleInputForPlacementPhase() {
-        System.out.println("Enter coordinates for placement of your piece (e.g. A1, K3):");
+        System.out.println("\u001B[35mEnter coordinates for placement of your piece (e.g. A1, K3):\u001B[0m");
         String line = scanner.nextLine().toUpperCase();
         if (line.equals("EXIT")) {
             System.exit(0);
@@ -63,7 +63,7 @@ public class ConsoleInputHandler implements InputHandler {
     }
 
     private void handleInputForMovementPhase() {
-        System.out.println("Choose to remove red piece (e.g. RK1) or move your to a new position (e.g. MA1B2, MU1T2):");
+        System.out.println("\u001B[35mChoose to remove red piece (e.g. RK1) or move your piece to a new position (e.g. MA1B2, MU1T2):\u001B[0m");
         String line = scanner.nextLine().toUpperCase();
         if (line.equals("EXIT")) {
             System.exit(0);
@@ -118,13 +118,14 @@ public class ConsoleInputHandler implements InputHandler {
         }
     }
 
-    private String getSymbolForPlayer(){
-        switch (field.getCurrentPlayer()){
+    private String getSymbolForPlayer() {
+        switch (field.getCurrentPlayer()) {
             case BLACK:
                 return ("\u001B[37m" + "&" + "\u001B[0m");
             case WHITE:
                 return ("\u001B[30m" + "$" + "\u001B[0m");
-            default: throw new IllegalStateException();
+            default:
+                throw new IllegalStateException();
         }
     }
 

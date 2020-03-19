@@ -176,7 +176,7 @@ public class ConsoleUI implements UI {
     }
 
     private void playAgain() {
-        System.out.println("Would you like to play again? [Yes/No]");
+        System.out.println("\u001B[35mWould you like to play again? [Yes/No]\u001B[0m");
         String answer = new Scanner(System.in).nextLine().toUpperCase();
 
         switch (answer) {
@@ -196,10 +196,10 @@ public class ConsoleUI implements UI {
     }
 
     private void printSquareCoordinates() {
-        System.out.println("Squares:");
+        System.out.print("\u001B[34mSquares: \u001B[0m");
         for (int i = 0; i < field.getSquareCoordinates().length; i++) {
             System.out.print(field.getSquareCoordinates()[i] + " ");
-            if (i % 8 == 0 && i != 0) {
+            if (i == field.getSquareCoordinates().length/2 - 2) {
                 System.out.println();
             }
         }
