@@ -25,7 +25,7 @@ public class ConsoleUI implements UI {
             printSquareCoordinates();
             handleInput();
         }
-        while (field.getGameState() == GameState.PLAYING && !field.areDrawConditionsMet());
+        while (field.getGameState() == GameState.PLAYING && !isDrawn());
         printField();
         printFinalMessage();
         playAgain();
@@ -34,6 +34,10 @@ public class ConsoleUI implements UI {
     private void printFinalMessage() {
         if (field.areDrawConditionsMet()) {
             System.out.println("The game has been drawn. No captures or removes in last 50 turns, or no move was possible.");
+        }
+
+        if (inputHandler.isDrawnByPlayer()) {
+            System.out.println("The game has been drawn.");
         }
 
         if (field.getGameState() == GameState.SOLVED) {
@@ -52,7 +56,7 @@ public class ConsoleUI implements UI {
         printFieldBody();
     }
 
-    private void printFieldBody(){
+    private void printFieldBody() {
         System.out.println("\u001B[33m==========================================================\u001B[0m");
         printUpperPart();
         printMiddlePart(9);
@@ -116,12 +120,12 @@ public class ConsoleUI implements UI {
         System.out.println("J       " + getCharacter(field.getField()[i][0]) + "              " + getCharacter(field.getField()[i][1]) +
                 "               " + getCharacter(field.getField()[i][2]) + "               " + getCharacter(field.getField()[i][3]));
         System.out.print("\u001B[33m");
-        System.out.println("K          " + getCharacter(field.getField()[i+1][0]) + "      " + getCharacter(field.getField()[i+1][1]) +
-                "       " + getCharacter(field.getField()[i+1][2]) + "       " + getCharacter(field.getField()[i+1][3]) +
-                "        " + getCharacter(field.getField()[i+1][4]) + "       " + getCharacter(field.getField()[i+1][5]));
+        System.out.println("K          " + getCharacter(field.getField()[i + 1][0]) + "      " + getCharacter(field.getField()[i + 1][1]) +
+                "       " + getCharacter(field.getField()[i + 1][2]) + "       " + getCharacter(field.getField()[i + 1][3]) +
+                "        " + getCharacter(field.getField()[i + 1][4]) + "       " + getCharacter(field.getField()[i + 1][5]));
         System.out.print("\u001B[33m");
-        System.out.println("L       " + getCharacter(field.getField()[i+2][0]) + "              " + getCharacter(field.getField()[i+2][1]) +
-                "               " + getCharacter(field.getField()[i +2][2]) + "               " + getCharacter(field.getField()[i +2][3]));
+        System.out.println("L       " + getCharacter(field.getField()[i + 2][0]) + "              " + getCharacter(field.getField()[i + 2][1]) +
+                "               " + getCharacter(field.getField()[i + 2][2]) + "               " + getCharacter(field.getField()[i + 2][3]));
     }
 
     private String getCharacter(Piece piece) {
@@ -139,13 +143,14 @@ public class ConsoleUI implements UI {
         }
     }
 
-    private String getSymbolForPlayer(){
-        switch (field.getCurrentPlayer()){
+    private String getSymbolForPlayer() {
+        switch (field.getCurrentPlayer()) {
             case BLACK:
                 return ("\u001B[37m" + "&" + "\u001B[0m");
             case WHITE:
                 return ("\u001B[30m" + "$" + "\u001B[0m");
-            default: throw new IllegalStateException();
+            default:
+                throw new IllegalStateException();
         }
     }
 
@@ -165,7 +170,8 @@ public class ConsoleUI implements UI {
         System.out.println("Neutral pieces can be removed only if there are no adjacent player pieces near.");
         System.out.println("Draw happens if in 50 turns no piece has been captured or neutral piece removed " +
                 "or current player cannot perform a move.\n");
-        System.out.println("To end the game, write EXIT at any time.");
+        System.out.println("To propose a draw, write 'DRAW' at any time");
+        System.out.println("To end the game, write 'EXIT' at any time.");
 
         pressEnterKeyToContinue();
     }
@@ -177,13 +183,14 @@ public class ConsoleUI implements UI {
 
     private void playAgain() {
         System.out.println("\u001B[35mWould you like to play again? [Yes/No]\u001B[0m");
-        String answer = new Scanner(System.in).nextLine().toUpperCase();
+        String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
 
         switch (answer) {
             case "YES":
-                System.out.println("Resetting the field");
+                System.out.println("Starting the game again.");
                 this.field = new Field();
-                break;
+                run();
+                return;
             case "NO":
                 System.out.println("Exiting the game");
                 System.exit(0);
@@ -199,11 +206,15 @@ public class ConsoleUI implements UI {
         System.out.print("\u001B[34mSquares: \u001B[0m");
         for (int i = 0; i < field.getSquareCoordinates().length; i++) {
             System.out.print(field.getSquareCoordinates()[i] + " ");
-            if (i == field.getSquareCoordinates().length/2 - 2) {
+            if (i == field.getSquareCoordinates().length / 2 - 2) {
                 System.out.println();
             }
         }
         System.out.println();
+    }
+
+    private boolean isDrawn() {
+        return field.areDrawConditionsMet() || inputHandler.isDrawnByPlayer();
     }
 }
 

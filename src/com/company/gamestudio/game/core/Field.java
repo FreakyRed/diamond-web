@@ -79,6 +79,7 @@ public class Field {
             this.gameState = GameState.SOLVED;
             return true;
         }
+
         changePlayer();
         transitionBetweenPhases();
         return true;
@@ -115,24 +116,10 @@ public class Field {
             throw new WrongGamePhaseException();
         }
 
-        if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {
+        if (areCoordinatesOutOfBounds(rowFrom, colFrom, rowTo, colTo)) {
             return false;
         }
-        if (rowTo < 0 || rowTo >= field.length || colTo < 0 || colTo >= field[rowTo].length) {
-            return false;
-        }
-        if (this.field[rowFrom][colFrom].getPieceType() == PieceType.EMPTY) {
-            throw new PieceNotPresentException();
-        }
-        if (this.field[rowTo][colTo].getPieceType() != PieceType.EMPTY) {
-            throw new PieceAlreadyOccupiedException();
-        }
-        if (!this.field[rowFrom][colFrom].isConnectedTo(this.field[rowTo][colTo])) {
-            throw new PiecesNotConnectedException();
-        }
-        if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) {
-            throw new WrongPieceTypeException();
-        }
+        checkPiecesExceptions(rowFrom, colFrom, rowTo, colTo);
 
         this.field[rowFrom][colFrom].setPieceType(PieceType.EMPTY);
         if (getCurrentPlayer() == Player.BLACK) {
@@ -146,6 +133,7 @@ public class Field {
             this.gameState = GameState.SOLVED;
             return true;
         }
+
         changePlayer();
         return true;
     }
@@ -198,25 +186,25 @@ public class Field {
                 .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));
     }
 
-    public String[] getSquareCoordinates(){
+    public String[] getSquareCoordinates() {
         StringBuilder stringBuilder = new StringBuilder();
         tiles.getTileList().stream()
                 .filter(t -> t instanceof Square)
                 .map(s -> s.getPieces())
-                .forEach(p -> findPositionInField(p,stringBuilder));
+                .forEach(p -> findPositionInField(p, stringBuilder));
 
         String[] squareCoordinates = stringBuilder.toString().split(" ");
         Arrays.sort(squareCoordinates);
         return squareCoordinates;
     }
 
-    private void findPositionInField(List<Piece> pieceList,StringBuilder stringBuilder){
+    private void findPositionInField(List<Piece> pieceList, StringBuilder stringBuilder) {
 
-        for(Piece piece:pieceList){
-            for(int row=0;row<getField().length;row++){
-                for(int col=0;col<getField()[row].length;col++){
-                    if(getField()[row][col] == piece) {
-                        stringBuilder.append((char)(row +'A'));
+        for (Piece piece : pieceList) {
+            for (int row = 0; row < getField().length; row++) {
+                for (int col = 0; col < getField()[row].length; col++) {
+                    if (getField()[row][col] == piece) {
+                        stringBuilder.append((char) (row + 'A'));
                         stringBuilder.append((col + 1));
                         break;
                     }
@@ -226,4 +214,25 @@ public class Field {
         stringBuilder.append(" ");
     }
 
+    private boolean areCoordinatesOutOfBounds(int rowFrom, int colFrom, int rowTo, int colTo) {
+        if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {
+            return true;
+        }
+        return rowTo < 0 || rowTo >= field.length || colTo < 0 || colTo >= field[rowTo].length;
+    }
+
+    private void checkPiecesExceptions(int rowFrom, int colFrom, int rowTo, int colTo) throws PiecesException {
+        if (this.field[rowFrom][colFrom].getPieceType() == PieceType.EMPTY) {
+            throw new PieceNotPresentException();
+        }
+        if (this.field[rowTo][colTo].getPieceType() != PieceType.EMPTY) {
+            throw new PieceAlreadyOccupiedException();
+        }
+        if (!this.field[rowFrom][colFrom].isConnectedTo(this.field[rowTo][colTo])) {
+            throw new PiecesNotConnectedException();
+        }
+        if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) {
+            throw new WrongPieceTypeException();
+        }
+    }
 }

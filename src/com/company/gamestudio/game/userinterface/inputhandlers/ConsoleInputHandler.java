@@ -14,6 +14,7 @@ public class ConsoleInputHandler implements InputHandler {
 
     private Field field;
     private Scanner scanner = new Scanner(System.in);
+    private boolean drawnByPlayer = false;
     private final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("\\s*([A-U])([1-9])\\s*");
     private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
     private final Pattern INPUT_PATTERN_REMOVE = Pattern.compile("\\s*(R)(([A-U])([1-9]))\\s*");
@@ -33,20 +34,27 @@ public class ConsoleInputHandler implements InputHandler {
 
     private void handleInputForPlacementPhase() {
         System.out.println("\u001B[35mEnter coordinates for placement of your piece (e.g. A1, K3):\u001B[0m");
-        String line = scanner.nextLine().toUpperCase();
+        String line = scanner.nextLine().strip().toUpperCase();
+
         if (line.equals("EXIT")) {
             System.exit(0);
+        } else if (line.equals("DRAW")) {
+            if (proposeDraw()) {
+                return;
+            }
+            handleInputForPlacementPhase();
         }
+
         Matcher matcher = INPUT_PATTERN_PLACEMENT.matcher(line);
 
         if (matcher.matches()) {
-            placePieceToPlace(matcher);
+            placePieceToPosition(matcher);
         } else {
             System.out.println("Bad input, please try again");
         }
     }
 
-    private void placePieceToPlace(Matcher matcher) {
+    private void placePieceToPosition(Matcher matcher) {
         int row = matcher.group(1).charAt(0) - 65;
         int col = Integer.parseInt(matcher.group(2)) - 1;
 
@@ -64,10 +72,17 @@ public class ConsoleInputHandler implements InputHandler {
 
     private void handleInputForMovementPhase() {
         System.out.println("\u001B[35mChoose to remove red piece (e.g. RK1) or move your piece to a new position (e.g. MA1B2, MU1T2):\u001B[0m");
-        String line = scanner.nextLine().toUpperCase();
+        String line = scanner.nextLine().strip().toUpperCase();
+
         if (line.equals("EXIT")) {
             System.exit(0);
+        } else if (line.equals("DRAW")) {
+            if (proposeDraw()) {
+                return;
+            }
+            handleInputForMovementPhase();
         }
+
         Matcher moveMatcher = INPUT_PATTERN_MOVEMENT.matcher(line);
         Matcher removeMatcher = INPUT_PATTERN_REMOVE.matcher(line);
 
@@ -78,6 +93,7 @@ public class ConsoleInputHandler implements InputHandler {
         } else {
             System.out.println("Bad input, try again");
         }
+
     }
 
     private void parseInputAndMovePiece(Matcher matcher) {
@@ -129,4 +145,22 @@ public class ConsoleInputHandler implements InputHandler {
         }
     }
 
+    private boolean proposeDraw() {
+        System.out.println("Player proposed a draw. Do you wish to draw the game?[yes/no]");
+        String answer = scanner.nextLine().toUpperCase();
+
+        if (answer.equals("YES")) {
+            this.drawnByPlayer = true;
+            return true;
+        } else if (answer.equals("NO")) {
+            System.out.println("You have refused to draw the game. Game continues.");
+            return false;
+        }
+        System.out.println("Wrong choice.");
+        return false;
+    }
+
+    public boolean isDrawnByPlayer() {
+        return drawnByPlayer;
+    }
 }
