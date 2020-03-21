@@ -198,7 +198,7 @@ public class Field {
         return squareCoordinates;
     }
 
-    private void findPositionInField(List<Piece> pieceList, StringBuilder stringBuilder) {
+    public void findPositionInField(List<Piece> pieceList, StringBuilder stringBuilder) {
 
         for (Piece piece : pieceList) {
             for (int row = 0; row < getField().length; row++) {
@@ -234,5 +234,13 @@ public class Field {
         if (this.field[rowFrom][colFrom].getPieceType() != getCurrentPlayer().getColour()) {
             throw new WrongPieceTypeException();
         }
+    }
+
+    public List<Piece> getConnectedPieces(int row, int col){
+        return field[row][col].getConnectedPieces();
+    }
+
+    public void swapPlayer(){
+        //DO NOTHING ???
     }
 }

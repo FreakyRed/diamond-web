@@ -170,7 +170,8 @@ public class ConsoleUI implements UI {
         System.out.println("Neutral pieces can be removed only if there are no adjacent player pieces near.");
         System.out.println("Draw happens if in 50 turns no piece has been captured or neutral piece removed " +
                 "or current player cannot perform a move.\n");
-        System.out.println("To propose a draw, write 'DRAW' at any time");
+        System.out.println("To show connected pieces, write 'SHOW' and coordinates of the specific piece. (e.g showA1, showK3)");
+        System.out.println("To propose a draw, write 'DRAW' at any time.");
         System.out.println("To end the game, write 'EXIT' at any time.");
 
         pressEnterKeyToContinue();

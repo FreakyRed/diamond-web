@@ -2,10 +2,11 @@ package com.company.gamestudio.game.userinterface.inputhandlers;
 
 import com.company.gamestudio.game.core.Field;
 import com.company.gamestudio.game.core.GamePhase;
-import com.company.gamestudio.game.core.Player;
+import com.company.gamestudio.game.core.Piece;
 import com.company.gamestudio.game.exceptions.gamephase.WrongGamePhaseException;
 import com.company.gamestudio.game.exceptions.pieces.PiecesException;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +19,7 @@ public class ConsoleInputHandler implements InputHandler {
     private final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("\\s*([A-U])([1-9])\\s*");
     private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
     private final Pattern INPUT_PATTERN_REMOVE = Pattern.compile("\\s*(R)(([A-U])([1-9]))\\s*");
+    private final Pattern INPUT_PATTERN_SHOW_CONNECTED = Pattern.compile("\\s*(SHOW)(([A-U])([1-9]))\\s*");
 
     public ConsoleInputHandler(Field field) {
         this.field = field;
@@ -45,13 +47,37 @@ public class ConsoleInputHandler implements InputHandler {
             handleInputForPlacementPhase();
         }
 
-        Matcher matcher = INPUT_PATTERN_PLACEMENT.matcher(line);
+        Matcher matcherPlace = INPUT_PATTERN_PLACEMENT.matcher(line);
+        Matcher matcherShow = INPUT_PATTERN_SHOW_CONNECTED.matcher(line);
 
-        if (matcher.matches()) {
-            placePieceToPosition(matcher);
+        if (matcherShow.matches()) {
+            showConnectedPieces(matcherShow);
+        } else if (matcherPlace.matches()) {
+            placePieceToPosition(matcherPlace);
         } else {
             System.out.println("Bad input, please try again");
         }
+    }
+
+    private void showConnectedPieces(Matcher matcher) {
+        int row = matcher.group(3).charAt(0) - 65;
+        int col = Integer.parseInt(matcher.group(4)) - 1;
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            List<Piece> connectedPieces = field.getConnectedPieces(row, col);
+            field.findPositionInField(connectedPieces, stringBuilder);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Piece coordinates are not within the field");
+            return;
+        }
+
+        for(int i = 2; i < stringBuilder.length(); i += 3){
+            stringBuilder.insert(i," ");
+        }
+
+        System.out.println("Pieces connected to " + matcher.group(2) + ": " + stringBuilder.toString());
     }
 
     private void placePieceToPosition(Matcher matcher) {
@@ -85,8 +111,12 @@ public class ConsoleInputHandler implements InputHandler {
 
         Matcher moveMatcher = INPUT_PATTERN_MOVEMENT.matcher(line);
         Matcher removeMatcher = INPUT_PATTERN_REMOVE.matcher(line);
+        Matcher showMatcher = INPUT_PATTERN_SHOW_CONNECTED.matcher(line);
 
-        if (moveMatcher.matches()) {
+        if(showMatcher.matches()) {
+            showConnectedPieces(showMatcher);
+        }
+        else if (moveMatcher.matches()) {
             parseInputAndMovePiece(moveMatcher);
         } else if (removeMatcher.matches()) {
             removeNeutralPiece(removeMatcher);
@@ -106,10 +136,10 @@ public class ConsoleInputHandler implements InputHandler {
     }
 
     private void movePieceFromPlace(Matcher matcher, int rowFrom, int colFrom, int rowTo, int colTo) {
-        Player currentPlayer = field.getCurrentPlayer();
+        String currentPlayer = field.getCurrentPlayer().toString() + "(" + getSymbolForPlayer() + ")";
         try {
             if (field.movePiece(rowFrom, colFrom, rowTo, colTo)) {
-                System.out.println("Moved " + currentPlayer.toString() + "(" + getSymbolForPlayer() + ")"
+                System.out.println("Moved " + currentPlayer
                         + " piece from " + matcher.group(2) + " to " + matcher.group(5));
             } else {
                 System.out.println("Entered coordinates are not within the field");
