@@ -1,4 +1,4 @@
-package gamestudio.core.field;
+package gamestudio.diamond.core.field;
 
 import gamestudio.diamond.core.*;
 import gamestudio.diamond.exceptions.gamephase.WrongGamePhaseException;
