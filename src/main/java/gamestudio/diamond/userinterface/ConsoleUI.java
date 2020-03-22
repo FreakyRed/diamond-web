@@ -6,10 +6,14 @@ import gamestudio.diamond.core.Piece;
 import gamestudio.diamond.core.Square;
 import gamestudio.diamond.userinterface.inputhandlers.ConsoleInputHandler;
 import gamestudio.entity.Comment;
+import gamestudio.entity.Rating;
 import gamestudio.entity.Score;
 import gamestudio.service.comment.CommentException;
 import gamestudio.service.comment.CommentService;
 import gamestudio.service.comment.CommentServiceJDBC;
+import gamestudio.service.rating.RatingException;
+import gamestudio.service.rating.RatingService;
+import gamestudio.service.rating.RatingServiceJDBC;
 import gamestudio.service.score.ScoreException;
 import gamestudio.service.score.ScoreService;
 import gamestudio.service.score.ScoreServiceJDBC;
@@ -22,6 +26,7 @@ public class ConsoleUI implements UI {
 
     private ScoreService scoreService = new ScoreServiceJDBC();
     private CommentService commentService = new CommentServiceJDBC();
+    private RatingService ratingService = new RatingServiceJDBC();
 
     private static final String GAME_NAME = "Diamond";
 
@@ -35,6 +40,7 @@ public class ConsoleUI implements UI {
         printInfoAboutGame();
         printScores();
         printFiveLatestComments();
+        printAverageRating();
         do {
             printField();
             printSquareCoordinates();
@@ -44,6 +50,7 @@ public class ConsoleUI implements UI {
         printField();
         printFinalMessage();
         askToComment();
+        askToRateTheGame();
         playAgain();
     }
 
@@ -307,6 +314,45 @@ public class ConsoleUI implements UI {
             System.out.println("Something went wrong, unable to load five last comments");
         }
         pressEnterKeyToContinue();
+    }
+
+    private void printAverageRating(){
+        try{
+        int averageRating = ratingService.getAverageRating(GAME_NAME);
+        System.out.println("The \u001B[34maverage rating \u001B[0mfor this game is: " + averageRating);
+        }catch (RatingException e){
+            System.out.println("Unable to get average rating for this game");
+        }
+        pressEnterKeyToContinue();
+    }
+
+    private void askToRateTheGame(){
+        System.out.println("\u001B[35mWould you like to rate the game? [Yes/No]\u001B[0m");
+        String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
+
+        switch (answer) {
+            case "YES":
+                System.out.println("Please enter your rating from 0 to 5");
+                Integer rating = new Scanner(System.in).nextInt();
+                if(rating < 0 || rating > 5) {
+                    System.out.println("You have entered invalid value.");
+                    askToRateTheGame();
+                }
+                try {
+                    ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, rating, new Date()));
+                } catch (RatingException e) {
+                    System.out.println("There was a error sending your rating. Please try again later");
+                    return;
+                }
+                System.out.println("Thank you for your comment, it was send.");
+                return;
+            case "NO":
+                return;
+            default:
+                System.out.println("Not a valid option, please enter 'Yes' or 'No'");
+                askToRateTheGame();
+                break;
+        }
     }
 
 
