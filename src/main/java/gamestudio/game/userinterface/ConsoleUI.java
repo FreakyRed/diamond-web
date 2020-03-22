@@ -3,14 +3,15 @@ package main.java.gamestudio.game.userinterface;
 import main.java.gamestudio.game.core.Field;
 import main.java.gamestudio.game.core.GameState;
 import main.java.gamestudio.game.core.Piece;
+import main.java.gamestudio.game.core.Square;
 import main.java.gamestudio.game.userinterface.inputhandlers.ConsoleInputHandler;
-import main.java.gamestudio.game.userinterface.inputhandlers.InputHandler;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class ConsoleUI implements UI {
     private Field field;
-    private InputHandler inputHandler;
+    private ConsoleInputHandler inputHandler;
 
     public ConsoleUI(Field field) {
         this.field = field;
@@ -205,9 +206,9 @@ public class ConsoleUI implements UI {
 
     private void printSquareCoordinates() {
         System.out.print("\u001B[34mSquares: \u001B[0m");
-        for (int i = 0; i < field.getSquareCoordinates().length; i++) {
-            System.out.print(field.getSquareCoordinates()[i] + " ");
-            if (i == field.getSquareCoordinates().length / 2 - 2) {
+        for (int i = 0; i < getSquareCoordinates().length; i++) {
+            System.out.print(getSquareCoordinates()[i] + " ");
+            if (i == getSquareCoordinates().length / 2 - 2) {
                 System.out.println();
             }
         }
@@ -217,5 +218,19 @@ public class ConsoleUI implements UI {
     private boolean isDrawn() {
         return field.areDrawConditionsMet() || inputHandler.isDrawnByPlayer();
     }
+
+
+    private String[] getSquareCoordinates() {
+        StringBuilder stringBuilder = new StringBuilder();
+        field.getTiles().stream()
+                .filter(t -> t instanceof Square)
+                .map(s -> s.getPieces())
+                .forEach(p -> inputHandler.findPositionOfPieceInField(p, stringBuilder));
+
+        String[] squareCoordinates = stringBuilder.toString().split(" ");
+        Arrays.sort(squareCoordinates);
+        return squareCoordinates;
+    }
+
 }
 

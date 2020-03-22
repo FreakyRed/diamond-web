@@ -101,7 +101,7 @@ class Tiles {
         return new Triangle(listOfPieces);
     }
 
-    List<Tile> getTileList() {
+    public List<Tile> getTileList() {
         return tileList;
     }
 }

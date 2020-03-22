@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConsoleInputHandler implements InputHandler {
+public class ConsoleInputHandler{
 
     private Field field;
     private Scanner scanner = new Scanner(System.in);
@@ -25,7 +25,6 @@ public class ConsoleInputHandler implements InputHandler {
         this.field = field;
     }
 
-    @Override
     public void handleInput() {
         if (field.getGamePhase() == GamePhase.PLACEMENT) {
             handleInputForPlacementPhase();
@@ -67,7 +66,7 @@ public class ConsoleInputHandler implements InputHandler {
 
         try {
             List<Piece> connectedPieces = field.getConnectedPieces(row, col);
-            field.findPositionInField(connectedPieces, stringBuilder);
+            findPositionOfPieceInField(connectedPieces, stringBuilder);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("Piece coordinates are not within the field");
             return;
@@ -192,5 +191,20 @@ public class ConsoleInputHandler implements InputHandler {
 
     public boolean isDrawnByPlayer() {
         return drawnByPlayer;
+    }
+
+    public void findPositionOfPieceInField(List<Piece> pieceList, StringBuilder stringBuilder) {
+        for (Piece piece : pieceList) {
+            for (int row = 0; row < field.getField().length; row++) {
+                for (int col = 0; col < field.getField()[row].length; col++) {
+                    if (field.getField()[row][col] == piece) {
+                        stringBuilder.append((char) (row + 'A'));
+                        stringBuilder.append((col + 1));
+                        break;
+                    }
+                }
+            }
+        }
+        stringBuilder.append(" ");
     }
 }

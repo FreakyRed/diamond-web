@@ -9,18 +9,17 @@ import java.util.stream.Stream;
 
 public class Field {
     private Piece[][] field = new Piece[21][];
-    private Tiles tiles;
+    private List<Tile> tiles;
     private GamePhase gamePhase = GamePhase.PLACEMENT;
     private GameState gameState = GameState.PLAYING;
     private Player currentPlayer = Player.BLACK;
     private static int turnsWithoutCaptureOrRemove = 0;
-    private boolean firstTurn = true;
 
     private static final int MAX_PIECES = 24;
 
     public Field() {
         initializeField();
-        tiles = new Tiles(getAllPieces());
+        tiles = new Tiles(getAllPieces()).getTileList();
     }
 
     private void initializeField() {
@@ -43,10 +42,14 @@ public class Field {
         }
     }
 
-    private Piece[] getAllPieces() {
+    public Piece[] getAllPieces() {
         return Stream.of(field)
                 .flatMap(Stream::of)
                 .toArray(Piece[]::new);
+    }
+
+    public List<Tile> getTiles(){
+        return this.tiles;
     }
 
     public Player getCurrentPlayer() {
@@ -87,7 +90,7 @@ public class Field {
     }
 
     private boolean isSolved() {
-        return tiles.getTileList().stream()
+        return tiles.stream()
                 .filter(t -> t instanceof Square)
                 .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
     }
@@ -105,7 +108,7 @@ public class Field {
     }
 
     private List<? extends Tile> findTrianglesContainingPiece(Piece piece) {
-        return tiles.getTileList().stream()
+        return tiles.stream()
                 .filter(t -> t instanceof Triangle)
                 .filter(t -> t.getPieces().contains(piece))
                 .collect(Collectors.toList());
@@ -134,7 +137,6 @@ public class Field {
             this.gameState = GameState.SOLVED;
             return true;
         }
-
         changePlayer();
         return true;
     }
@@ -188,34 +190,6 @@ public class Field {
                 .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));
     }
 
-    public String[] getSquareCoordinates() {
-        StringBuilder stringBuilder = new StringBuilder();
-        tiles.getTileList().stream()
-                .filter(t -> t instanceof Square)
-                .map(s -> s.getPieces())
-                .forEach(p -> findPositionInField(p, stringBuilder));
-
-        String[] squareCoordinates = stringBuilder.toString().split(" ");
-        Arrays.sort(squareCoordinates);
-        return squareCoordinates;
-    }
-
-    public void findPositionInField(List<Piece> pieceList, StringBuilder stringBuilder) {
-
-        for (Piece piece : pieceList) {
-            for (int row = 0; row < getField().length; row++) {
-                for (int col = 0; col < getField()[row].length; col++) {
-                    if (getField()[row][col] == piece) {
-                        stringBuilder.append((char) (row + 'A'));
-                        stringBuilder.append((col + 1));
-                        break;
-                    }
-                }
-            }
-        }
-        stringBuilder.append(" ");
-    }
-
     private boolean areCoordinatesOutOfBounds(int rowFrom, int colFrom, int rowTo, int colTo) {
         if (rowFrom < 0 || rowFrom >= field.length || colFrom < 0 || colFrom >= field[rowFrom].length) {
             return true;
@@ -240,9 +214,5 @@ public class Field {
 
     public List<Piece> getConnectedPieces(int row, int col){
         return field[row][col].getConnectedPieces();
-    }
-
-    public void swapPlayer(){
-        //DO NOTHING ???
     }
 }

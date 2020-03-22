@@ -12,7 +12,7 @@ public class Piece implements Comparable<Piece> {
     private PieceType pieceType = PieceType.EMPTY;
     private List<Piece> connectedPieces = new ArrayList<>();
 
-    Piece() {
+    public Piece() {
 
     }
 
@@ -61,7 +61,7 @@ public class Piece implements Comparable<Piece> {
         this.connectedPieces.add(connectedPiece);
     }
 
-    List<Piece> getConnectedPieces() {
+    public List<Piece> getConnectedPieces() {
         return connectedPieces;
     }
 
