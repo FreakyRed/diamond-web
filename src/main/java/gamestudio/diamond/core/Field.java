@@ -14,9 +14,9 @@ public class Field {
     private GamePhase gamePhase = GamePhase.PLACEMENT;
     private GameState gameState = GameState.PLAYING;
     private Player currentPlayer = Player.BLACK;
-    private static int turnsWithoutCaptureOrRemove = 0;
 
-    private static final int MAX_PIECES = 24;
+    private static int turnsWithoutCaptureOrRemove = 0;
+    private static final int MAX_PIECES = 8;
 
     public Field() {
         initializeField();
@@ -215,5 +215,19 @@ public class Field {
 
     public List<Piece> getConnectedPieces(int row, int col){
         return field[row][col].getConnectedPieces();
+    }
+
+    public int getScore(){
+        long numberOfPiecesNotEmpty = Arrays.stream(getAllPieces())
+                .filter(p-> p.getPieceType() != PieceType.NEUTRAL)
+                .count();
+
+        long numberOfRedPieces = Arrays.stream(getAllPieces())
+                .filter(p -> p.getPieceType() == PieceType.NEUTRAL)
+                .count();
+
+        numberOfRedPieces = numberOfRedPieces == 0 ? 1 : numberOfRedPieces;
+
+        return (int) (100 * (numberOfPiecesNotEmpty + numberOfRedPieces));
     }
 }

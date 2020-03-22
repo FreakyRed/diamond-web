@@ -19,7 +19,7 @@ public class ConsoleInputHandler{
     private final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("\\s*([A-U])([1-9])\\s*");
     private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
     private final Pattern INPUT_PATTERN_REMOVE = Pattern.compile("\\s*(R)(([A-U])([1-9]))\\s*");
-    private final Pattern INPUT_PATTERN_SHOW_CONNECTED = Pattern.compile("\\s*(SHOW)(([A-U])([1-9]))\\s*");
+    private final Pattern INPUT_PATTERN_SHOW_CONNECTED = Pattern.compile("\\s*(SHOW)\\s*(([A-U])([1-9]))\\s*");
 
     public ConsoleInputHandler(Field field) {
         this.field = field;
@@ -96,7 +96,7 @@ public class ConsoleInputHandler{
     }
 
     private void handleInputForMovementPhase() {
-        System.out.println("\u001B[35mChoose to remove red piece (e.g. RK1) or move your piece to a new position (e.g. MA1B2, MU1T2):\u001B[0m");
+        System.out.println("\u001B[35mChoose to remove neutral(red) piece (e.g. RK1) or move your piece to a new position (e.g. MA1B2, MU1T2):\u001B[0m");
         String line = scanner.nextLine().strip().toUpperCase();
 
         if (line.equals("EXIT")) {

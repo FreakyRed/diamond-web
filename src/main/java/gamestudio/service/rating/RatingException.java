@@ -1,4 +1,4 @@
-package gamestudio.service;
+package gamestudio.service.rating;
 
 public class RatingException extends Exception {
     public RatingException(String message) {

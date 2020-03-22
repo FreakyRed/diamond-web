@@ -1,4 +1,4 @@
-package gamestudio.service;
+package gamestudio.service.comment;
 
 import gamestudio.entity.Comment;
 

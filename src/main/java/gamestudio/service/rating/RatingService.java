@@ -1,4 +1,4 @@
-package gamestudio.service;
+package gamestudio.service.rating;
 
 import gamestudio.entity.Rating;
 

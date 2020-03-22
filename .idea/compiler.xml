@@ -9,8 +9,5 @@
         <module name="gamestudio_diamond" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="gamestudio_diamond" target="11" />
-    </bytecodeTargetLevel>
   </component>
 </project>

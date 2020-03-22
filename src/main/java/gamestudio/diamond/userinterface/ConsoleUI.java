@@ -5,13 +5,25 @@ import gamestudio.diamond.core.GameState;
 import gamestudio.diamond.core.Piece;
 import gamestudio.diamond.core.Square;
 import gamestudio.diamond.userinterface.inputhandlers.ConsoleInputHandler;
+import gamestudio.entity.Comment;
+import gamestudio.entity.Score;
+import gamestudio.service.comment.CommentException;
+import gamestudio.service.comment.CommentService;
+import gamestudio.service.comment.CommentServiceJDBC;
+import gamestudio.service.score.ScoreException;
+import gamestudio.service.score.ScoreService;
+import gamestudio.service.score.ScoreServiceJDBC;
 
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 public class ConsoleUI implements UI {
     private Field field;
     private ConsoleInputHandler inputHandler;
+
+    private ScoreService scoreService = new ScoreServiceJDBC();
+    private CommentService commentService = new CommentServiceJDBC();
+
+    private static final String GAME_NAME = "Diamond";
 
     public ConsoleUI(Field field) {
         this.field = field;
@@ -21,6 +33,8 @@ public class ConsoleUI implements UI {
     @Override
     public void run() {
         printInfoAboutGame();
+        printScores();
+        printFiveLatestComments();
         do {
             printField();
             printSquareCoordinates();
@@ -29,6 +43,7 @@ public class ConsoleUI implements UI {
         while (field.getGameState() == GameState.PLAYING && !isDrawn());
         printField();
         printFinalMessage();
+        askToComment();
         playAgain();
     }
 
@@ -43,6 +58,8 @@ public class ConsoleUI implements UI {
 
         if (field.getGameState() == GameState.SOLVED) {
             System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
+            scoreService.addScore(new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Date()));
+            System.out.println("Entered your score: " + field.getScore() + " into the database");
         }
     }
 
@@ -171,7 +188,7 @@ public class ConsoleUI implements UI {
         System.out.println("Neutral pieces can be removed only if there are no adjacent player pieces near.");
         System.out.println("Draw happens if in 50 turns no piece has been captured or neutral piece removed " +
                 "or current player cannot perform a move.\n");
-        System.out.println("To show connected pieces, write 'SHOW' and coordinates of the specific piece. (e.g showA1, showK3)");
+        System.out.println("To show connected pieces, write 'SHOW' and coordinates of the specific piece. (e.g show A1, showK3)");
         System.out.println("To propose a draw, write 'DRAW' at any time.");
         System.out.println("To end the game, write 'EXIT' at any time.");
 
@@ -219,7 +236,6 @@ public class ConsoleUI implements UI {
         return field.areDrawConditionsMet() || inputHandler.isDrawnByPlayer();
     }
 
-
     private String[] getSquareCoordinates() {
         StringBuilder stringBuilder = new StringBuilder();
         field.getTiles().stream()
@@ -231,6 +247,68 @@ public class ConsoleUI implements UI {
         Arrays.sort(squareCoordinates);
         return squareCoordinates;
     }
+
+    private void printScores() {
+        List<Score> scores = scoreService.getBestScores(GAME_NAME);
+
+        Collections.sort(scores);
+        Collections.reverse(scores);
+
+        System.out.println("\u001B[34mLeaderboard: \u001B[0m");
+        for (Score score : scores) {
+            System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
+                    "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
+        }
+        pressEnterKeyToContinue();
+    }
+
+    private void askToComment() {
+        System.out.println("\u001B[35mWould you like to add a comment to this game? [Yes/No]\u001B[0m");
+        String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
+
+        switch (answer) {
+            case "YES":
+                System.out.println("Please enter your comment (max. 200 characters):");
+                String comment = new Scanner(System.in).nextLine().strip();
+                try {
+                    commentService.addComment(new Comment(System.getProperty("user.name"), GAME_NAME, comment, new Date()));
+                } catch (CommentException e) {
+                    System.out.println("There was a error sending your comment. Please try again later");
+                    return;
+                }
+                System.out.println("Thank you for your comment, it was send.");
+                return;
+            case "NO":
+                return;
+            default:
+                System.out.println("Not a valid option, please enter 'Yes' or 'No'");
+                askToComment();
+                break;
+        }
+    }
+
+    private void printFiveLatestComments() {
+        try {
+            List<Comment> commentList = commentService.getComments(GAME_NAME);
+            Collections.sort(commentList, (x, y) -> {
+                return y.getCommentedOn().compareTo(x.getCommentedOn());
+            });
+
+            System.out.println("\u001B[34mLatest comments: \u001B[0m");
+            for (int i = 0; i < commentList.size(); i++) {
+                if (i == 5) {
+                    break;
+                }
+                Comment currentComment = commentList.get(i);
+                System.out.println("\u001B[33m" + currentComment.getPlayer().toUpperCase() + "\u001B[0m" +
+                        "       " + currentComment.getComment() + "      " + currentComment.getCommentedOn());
+            }
+        } catch (CommentException e) {
+            System.out.println("Something went wrong, unable to load five last comments");
+        }
+        pressEnterKeyToContinue();
+    }
+
 
 }
 

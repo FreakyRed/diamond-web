@@ -1,23 +1,10 @@
-package gamestudio.service;
+package gamestudio.service.score;
 
 import gamestudio.entity.Score;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
-/*
-    CREATE TABLE score (
-        player VARCHAR(64) NOT NULL,
-        game VARCHAR(64) NOT NULL,
-        points INTEGER NOT NULL,
-        playedon TIMESTAMP NOT NULL
-    );
-     */
-
-//INSERT INTO score (player, game, points, playedon) VALUES ('jaro', 'mines', 200, '2017-03-02 14:30')
-
-//SELECT player, game, points, playedon FROM score WHERE game = 'mines' ORDER BY points DESC LIMIT 10;
 
 public class ScoreServiceJDBC implements ScoreService {
     public static final String URL = "jdbc:postgresql://localhost/gamestudio";
@@ -72,9 +59,9 @@ public class ScoreServiceJDBC implements ScoreService {
     }
 
     public static void main(String[] args) throws Exception {
-        Score score = new Score("mines", "jaro", 100, new java.util.Date());
+        Score score = new Score("diamond", "Martin", 100, new java.util.Date());
         ScoreService scoreService = new ScoreServiceJDBC();
         //scoreService.addScore(score);
-        System.out.println(scoreService.getBestScores("mines"));
+        System.out.println(scoreService.getBestScores("diamond"));
     }
 }
