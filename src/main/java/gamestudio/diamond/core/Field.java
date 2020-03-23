@@ -1,7 +1,7 @@
 package gamestudio.diamond.core;
 
-import gamestudio.diamond.exceptions.gamephase.WrongGamePhaseException;
-import gamestudio.diamond.exceptions.pieces.*;
+import gamestudio.diamond.core.exceptions.gamephase.WrongGamePhaseException;
+import gamestudio.diamond.core.exceptions.pieces.*;
 
 import java.util.Arrays;
 import java.util.List;

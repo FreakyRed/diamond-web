@@ -1,4 +1,4 @@
-package gamestudio.diamond.exceptions.gamephase;
+package gamestudio.diamond.core.exceptions.gamephase;
 
 public class WrongGamePhaseException extends Throwable {
     @Override

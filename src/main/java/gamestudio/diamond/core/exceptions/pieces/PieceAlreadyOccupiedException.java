@@ -1,4 +1,4 @@
-package gamestudio.diamond.exceptions.pieces;
+package gamestudio.diamond.core.exceptions.pieces;
 
 public class PieceAlreadyOccupiedException extends PiecesException {
     @Override

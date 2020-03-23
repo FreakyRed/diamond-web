@@ -49,7 +49,6 @@ public class CommentServiceJDBC implements CommentService {
                                 resultSet.getString(3),
                                 resultSet.getTimestamp(4)
                         );
-
                         commentList.add(comment);
                     }
                 }

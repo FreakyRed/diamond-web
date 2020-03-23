@@ -1,8 +1,8 @@
 package gamestudio.diamond.core;
 
-import gamestudio.diamond.exceptions.pieces.NeutralPieceAdjacentException;
-import gamestudio.diamond.exceptions.pieces.PiecesException;
-import gamestudio.diamond.exceptions.pieces.WrongPieceTypeException;
+import gamestudio.diamond.core.exceptions.pieces.NeutralPieceAdjacentException;
+import gamestudio.diamond.core.exceptions.pieces.PiecesException;
+import gamestudio.diamond.core.exceptions.pieces.WrongPieceTypeException;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -348,7 +348,7 @@ public class ConsoleUI implements UI {
         switch (answer) {
             case "YES":
                 System.out.println("Please enter your rating from 0 to 5");
-                Integer rating = new Scanner(System.in).nextInt();
+                int rating = new Scanner(System.in).nextInt();
                 if(rating < 0 || rating > 5) {
                     System.out.println("You have entered invalid value.");
                     askToRateTheGame();

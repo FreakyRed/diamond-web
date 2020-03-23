@@ -1,8 +1,8 @@
 package gamestudio.diamond.core.field;
 
 import gamestudio.diamond.core.*;
-import gamestudio.diamond.exceptions.gamephase.WrongGamePhaseException;
-import gamestudio.diamond.exceptions.pieces.*;
+import gamestudio.diamond.core.exceptions.gamephase.WrongGamePhaseException;
+import gamestudio.diamond.core.exceptions.pieces.*;
 import org.junit.jupiter.api.Test;
 
 

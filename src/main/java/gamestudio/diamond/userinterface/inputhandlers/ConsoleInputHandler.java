@@ -3,8 +3,8 @@ package gamestudio.diamond.userinterface.inputhandlers;
 import gamestudio.diamond.core.Field;
 import gamestudio.diamond.core.GamePhase;
 import gamestudio.diamond.core.Piece;
-import gamestudio.diamond.exceptions.gamephase.WrongGamePhaseException;
-import gamestudio.diamond.exceptions.pieces.PiecesException;
+import gamestudio.diamond.core.exceptions.gamephase.WrongGamePhaseException;
+import gamestudio.diamond.core.exceptions.pieces.PiecesException;
 
 import java.util.List;
 import java.util.Scanner;
