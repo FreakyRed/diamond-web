@@ -21,7 +21,7 @@ public class Square extends Tile {
         this.pieces.add(piece);
     }
 
-    boolean filledWithOneColour(PieceType colour) {
+    boolean isFilledWithOneColour(PieceType colour) {
         return pieces.stream()
                 .allMatch(p -> p.getPieceType() == colour);
     }

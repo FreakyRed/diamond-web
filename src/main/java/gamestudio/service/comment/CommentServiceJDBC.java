@@ -22,7 +22,7 @@ public class CommentServiceJDBC implements CommentService {
                 preparedStatement.setString(1, comment.getPlayer());
                 preparedStatement.setString(2, comment.getGame());
                 preparedStatement.setString(3, comment.getComment());
-                preparedStatement.setDate(4, new Date(comment.getCommentedOn().getTime()));
+                preparedStatement.setTimestamp(4, new Timestamp(comment.getCommentedOn().getTime()));
 
                 preparedStatement.executeUpdate();
             }

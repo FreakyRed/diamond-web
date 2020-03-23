@@ -93,7 +93,7 @@ public class Field {
     private boolean isSolved() {
         return tiles.stream()
                 .filter(t -> t instanceof Square)
-                .anyMatch(t -> ((Square) t).filledWithOneColour(getCurrentPlayer().getColour()));
+                .anyMatch(t -> ((Square) t).isFilledWithOneColour(getCurrentPlayer().getColour()));
     }
 
     private void capturePieceWithinTriangle(Piece piece) {

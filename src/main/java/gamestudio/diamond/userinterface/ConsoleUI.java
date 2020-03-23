@@ -38,9 +38,8 @@ public class ConsoleUI implements UI {
     @Override
     public void run() {
         printInfoAboutGame();
-        printScores();
         printFiveLatestComments();
-        printAverageRating();
+        printRatingsScreen();
         do {
             printField();
             printSquareCoordinates();
@@ -48,6 +47,7 @@ public class ConsoleUI implements UI {
         }
         while (field.getGameState() == GameState.PLAYING && !isDrawn());
         printField();
+        printScores();
         printFinalMessage();
         askToComment();
         askToRateTheGame();
@@ -316,18 +316,33 @@ public class ConsoleUI implements UI {
         pressEnterKeyToContinue();
     }
 
+    private void printRatingsScreen(){
+        printAverageRating();
+        printCurrentPlayerRating();
+        pressEnterKeyToContinue();
+    }
+
     private void printAverageRating(){
         try{
         int averageRating = ratingService.getAverageRating(GAME_NAME);
-        System.out.println("The \u001B[34maverage rating \u001B[0mfor this game is: " + averageRating);
+        System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
         }catch (RatingException e){
             System.out.println("Unable to get average rating for this game");
         }
-        pressEnterKeyToContinue();
+    }
+
+    private void printCurrentPlayerRating(){
+        try {
+        int currentPlayerRating = ratingService.getRating(GAME_NAME,System.getProperty("user.name"));
+        System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);}
+        catch (RatingException e){
+            System.out.println("You have not rated this game yet.");
+        }
     }
 
     private void askToRateTheGame(){
         System.out.println("\u001B[35mWould you like to rate the game? [Yes/No]\u001B[0m");
+        printCurrentPlayerRating();
         String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
 
         switch (answer) {
