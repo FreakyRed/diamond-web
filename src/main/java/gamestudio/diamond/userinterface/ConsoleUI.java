@@ -14,7 +14,6 @@ import gamestudio.service.comment.CommentServiceJDBC;
 import gamestudio.service.rating.RatingException;
 import gamestudio.service.rating.RatingService;
 import gamestudio.service.rating.RatingServiceJDBC;
-import gamestudio.service.score.ScoreException;
 import gamestudio.service.score.ScoreService;
 import gamestudio.service.score.ScoreServiceJDBC;
 
@@ -38,6 +37,7 @@ public class ConsoleUI implements UI {
     @Override
     public void run() {
         printInfoAboutGame();
+        printScores();
         printFiveLatestComments();
         printRatingsScreen();
         do {
@@ -47,8 +47,8 @@ public class ConsoleUI implements UI {
         }
         while (field.getGameState() == GameState.PLAYING && !isDrawn());
         printField();
-        printScores();
         printFinalMessage();
+        printScores();
         askToComment();
         askToRateTheGame();
         playAgain();
@@ -256,17 +256,15 @@ public class ConsoleUI implements UI {
     }
 
     private void printScores() {
-        List<Score> scores = scoreService.getBestScores(GAME_NAME);
+            List<Score> scores = scoreService.getBestScores(GAME_NAME);
+            Collections.sort(scores);
+            Collections.reverse(scores);
 
-        Collections.sort(scores);
-        Collections.reverse(scores);
-
-        System.out.println("\u001B[34mLeaderboard: \u001B[0m");
-        for (Score score : scores) {
-            System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
-                    "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
-        }
-        pressEnterKeyToContinue();
+            System.out.println("\u001B[34mLeaderboard: \u001B[0m");
+            for (Score score : scores) {
+                System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
+                        "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
+            }
     }
 
     private void askToComment() {
@@ -313,34 +311,33 @@ public class ConsoleUI implements UI {
         } catch (CommentException e) {
             System.out.println("Something went wrong, unable to load five last comments");
         }
-        pressEnterKeyToContinue();
     }
 
-    private void printRatingsScreen(){
+    private void printRatingsScreen() {
         printAverageRating();
         printCurrentPlayerRating();
         pressEnterKeyToContinue();
     }
 
-    private void printAverageRating(){
-        try{
-        int averageRating = ratingService.getAverageRating(GAME_NAME);
-        System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        }catch (RatingException e){
+    private void printAverageRating() {
+        try {
+            int averageRating = ratingService.getAverageRating(GAME_NAME);
+            System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
+        } catch (RatingException e) {
             System.out.println("Unable to get average rating for this game");
         }
     }
 
-    private void printCurrentPlayerRating(){
+    private void printCurrentPlayerRating() {
         try {
-        int currentPlayerRating = ratingService.getRating(GAME_NAME,System.getProperty("user.name"));
-        System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);}
-        catch (RatingException e){
+            int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
+            System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
+        } catch (RatingException e) {
             System.out.println("You have not rated this game yet.");
         }
     }
 
-    private void askToRateTheGame(){
+    private void askToRateTheGame() {
         System.out.println("\u001B[35mWould you like to rate the game? [Yes/No]\u001B[0m");
         printCurrentPlayerRating();
         String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
@@ -349,7 +346,7 @@ public class ConsoleUI implements UI {
             case "YES":
                 System.out.println("Please enter your rating from 0 to 5");
                 int rating = new Scanner(System.in).nextInt();
-                if(rating < 0 || rating > 5) {
+                if (rating < 0 || rating > 5) {
                     System.out.println("You have entered invalid value.");
                     askToRateTheGame();
                 }

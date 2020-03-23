@@ -49,7 +49,7 @@ public class Field {
                 .toArray(Piece[]::new);
     }
 
-    public List<Tile> getTiles(){
+    public List<Tile> getTiles() {
         return this.tiles;
     }
 
@@ -187,8 +187,13 @@ public class Field {
 
     private boolean isMovePossible() {
         return Arrays.stream(getAllPieces())
-                .filter(p -> p.getPieceType() == getCurrentPlayer().getColour())
-                .anyMatch(p -> p.getConnectedPieces().stream().anyMatch(r -> r.getPieceType() == PieceType.EMPTY));
+                    .filter(p -> p.getPieceType() == getCurrentPlayer().getColour())
+                    .anyMatch(p -> p.getConnectedPieces().stream()
+                            .anyMatch(r -> r.getPieceType() == PieceType.EMPTY))
+                ||
+                Arrays.stream(getAllPieces())
+                        .filter(p -> p.getPieceType() == PieceType.NEUTRAL)
+                        .anyMatch(Piece::isNeutralPieceRemovable);
     }
 
     private boolean areCoordinatesOutOfBounds(int rowFrom, int colFrom, int rowTo, int colTo) {
@@ -213,13 +218,13 @@ public class Field {
         }
     }
 
-    public List<Piece> getConnectedPieces(int row, int col){
+    public List<Piece> getConnectedPieces(int row, int col) {
         return field[row][col].getConnectedPieces();
     }
 
-    public int getScore(){
+    public int getScore() {
         long numberOfPiecesNotEmpty = Arrays.stream(getAllPieces())
-                .filter(p-> p.getPieceType() != PieceType.NEUTRAL)
+                .filter(p -> p.getPieceType() != PieceType.NEUTRAL)
                 .count();
 
         long numberOfRedPieces = Arrays.stream(getAllPieces())

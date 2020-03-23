@@ -42,13 +42,13 @@ public class Triangle extends Tile {
         }
 
         return pieces.stream()
-                .anyMatch(Piece::surroundedByEnemyPieces);
+                .anyMatch(Piece::isSurroundedByEnemyPieces);
     }
 
     Piece findCapturablePiece(Player player) {
-        if (pieces.stream().anyMatch(Piece::surroundedByEnemyPieces)) {
+        if (pieces.stream().anyMatch(Piece::isSurroundedByEnemyPieces)) {
             return pieces.stream()
-                    .filter(Piece::surroundedByEnemyPieces)
+                    .filter(Piece::isSurroundedByEnemyPieces)
                     .findFirst()
                     .get();
         }

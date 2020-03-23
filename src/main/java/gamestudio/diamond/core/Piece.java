@@ -30,7 +30,7 @@ public class Piece implements Comparable<Piece> {
         }
     }
 
-    boolean surroundedByEnemyPieces() {
+    boolean isSurroundedByEnemyPieces() {
         if (pieceType == PieceType.BLACK) {
             return this.getConnectedPieces().stream()
                     .map(Piece::getPieceType)
@@ -55,6 +55,13 @@ public class Piece implements Comparable<Piece> {
             this.setPieceType(PieceType.EMPTY);
             return true;
         }
+    }
+
+    boolean isNeutralPieceRemovable(){
+        if(this.getPieceType() == PieceType.NEUTRAL) {
+           return isSurroundedByEnemyPieces();
+        }
+        return false;
     }
 
     void addConnectedPiece(Piece connectedPiece) {
