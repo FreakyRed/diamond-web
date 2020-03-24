@@ -71,7 +71,6 @@ public class Field {
         }
 
         if (this.field[row][col].getPieceType() != PieceType.EMPTY) {
-            //throw new PieceAlreadyOccupiedException();
             return false;
         }
 
