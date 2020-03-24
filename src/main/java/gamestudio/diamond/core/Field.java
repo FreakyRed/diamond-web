@@ -61,7 +61,7 @@ public class Field {
         return this.field;
     }
 
-    public boolean placePiece(int row, int col) throws PiecesException, WrongGamePhaseException {
+    public boolean placePiece(int row, int col) throws WrongGamePhaseException {
         if (gamePhase != GamePhase.PLACEMENT) {
             throw new WrongGamePhaseException();
         }
@@ -71,7 +71,8 @@ public class Field {
         }
 
         if (this.field[row][col].getPieceType() != PieceType.EMPTY) {
-            throw new PieceAlreadyOccupiedException();
+            //throw new PieceAlreadyOccupiedException();
+            return false;
         }
 
         if (getCurrentPlayer() == Player.BLACK) {

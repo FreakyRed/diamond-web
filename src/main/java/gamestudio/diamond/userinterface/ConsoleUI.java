@@ -1,10 +1,9 @@
 package gamestudio.diamond.userinterface;
 
-import gamestudio.diamond.core.Field;
-import gamestudio.diamond.core.GameState;
-import gamestudio.diamond.core.Piece;
-import gamestudio.diamond.core.Square;
-import gamestudio.diamond.userinterface.inputhandlers.ConsoleInputHandler;
+import gamestudio.diamond.core.*;
+import gamestudio.diamond.userinterface.inputhandlers.PlayerInputHandler;
+import gamestudio.diamond.userinterface.inputhandlers.EasyBotInputHandler;
+import gamestudio.diamond.userinterface.inputhandlers.InputHandler;
 import gamestudio.entity.Comment;
 import gamestudio.entity.Rating;
 import gamestudio.entity.Score;
@@ -17,11 +16,15 @@ import gamestudio.service.rating.RatingServiceJDBC;
 import gamestudio.service.score.ScoreService;
 import gamestudio.service.score.ScoreServiceJDBC;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 public class ConsoleUI implements UI {
     private Field field;
-    private ConsoleInputHandler inputHandler;
+    private InputHandler playerInputHandler;
+    private InputHandler botOpponentInputHandler;
+    private boolean isOpponentBot = false;
+
 
     private ScoreService scoreService = new ScoreServiceJDBC();
     private CommentService commentService = new CommentServiceJDBC();
@@ -31,53 +34,62 @@ public class ConsoleUI implements UI {
 
     public ConsoleUI(Field field) {
         this.field = field;
-        this.inputHandler = new ConsoleInputHandler(field);
+        this.playerInputHandler = new PlayerInputHandler(field);
     }
 
     @Override
     public void run() {
-        printInfoAboutGame();
-        printScores();
-        printFiveLatestComments();
-        printRatingsScreen();
+        printGameDetails();
+        printServices();
+        askToPlayAgainstBot();
         do {
-            printField();
-            printSquareCoordinates();
-            handleInput();
+            gameLoop();
         }
         while (field.getGameState() == GameState.PLAYING && !isDrawn());
         printField();
         printFinalMessage();
         printScores();
+        askForPlayerInput();
+    }
+
+    private void printServices() {
+        printScores();
+        printFiveLatestComments();
+        printRatingsScreen();
+    }
+
+    private void askForPlayerInput() {
         askToComment();
         askToRateTheGame();
-        playAgain();
+        askToPlayAgain();
     }
+
 
     private void printFinalMessage() {
         if (field.areDrawConditionsMet()) {
             System.out.println("The game has been drawn. No captures or removes in last 50 turns, or no move was possible.");
         }
 
-        if (inputHandler.isDrawnByPlayer()) {
+        if (playerInputHandler.isDrawnByPlayer()) {
             System.out.println("The game has been drawn.");
         }
 
         if (field.getGameState() == GameState.SOLVED) {
             System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
-            scoreService.addScore(new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Date()));
+            scoreService.addScore(
+                    new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Timestamp(new Date().getTime())));
             System.out.println("Entered your score: " + field.getScore() + " into the database");
         }
     }
 
-    private void printGameDetails() {
+    private void printCurrentGameInformation() {
         System.out.print("\u001B[34mGamephase: \u001B[0m" + field.getGamePhase() +
                 "          " + "\u001B[34mCurrent Player: \u001B[0m" + field.getCurrentPlayer().toString());
         System.out.print("(" + getSymbolForPlayer() + ")\n");
     }
 
     private void printField() {
-        printGameDetails();
+        printCurrentGameInformation();
         printFieldBody();
     }
 
@@ -179,11 +191,7 @@ public class ConsoleUI implements UI {
         }
     }
 
-    private void handleInput() {
-        inputHandler.handleInput();
-    }
-
-    private void printInfoAboutGame() {
+    private void printGameDetails() {
         System.out.println("\n\u001B[33m         ========= DIAMOND =========\u001B[0m");
         System.out.println("The goal of this game(win condition) is to occupy 4 corners of any square.");
         System.out.println("Game has two phases: Placement phase and Movement phase");
@@ -207,7 +215,7 @@ public class ConsoleUI implements UI {
         new Scanner(System.in).nextLine();
     }
 
-    private void playAgain() {
+    private void askToPlayAgain() {
         System.out.println("\u001B[35mWould you like to play again? [Yes/No]\u001B[0m");
         String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
 
@@ -228,6 +236,27 @@ public class ConsoleUI implements UI {
         }
     }
 
+    private void askToPlayAgainstBot() {
+        System.out.println("\u001B[35mWould you like to play against a bot? [Yes/No]\u001B[0m");
+        String answer = new Scanner(System.in).nextLine().strip().toUpperCase();
+
+        switch (answer) {
+            case "YES":
+                this.isOpponentBot = true;
+                this.botOpponentInputHandler = new EasyBotInputHandler(this.field);
+                System.out.println("Setting up the bot...You are going first");
+                pressEnterKeyToContinue();
+                return;
+            case "NO":
+                System.out.println("Setting up local multiplayer game..");
+                break;
+            default:
+                System.out.println("Wrong answer, please try again.");
+                askToPlayAgainstBot();
+                break;
+        }
+    }
+
     private void printSquareCoordinates() {
         System.out.print("\u001B[34mSquares: \u001B[0m");
         for (int i = 0; i < getSquareCoordinates().length; i++) {
@@ -240,7 +269,7 @@ public class ConsoleUI implements UI {
     }
 
     private boolean isDrawn() {
-        return field.areDrawConditionsMet() || inputHandler.isDrawnByPlayer();
+        return field.areDrawConditionsMet() || playerInputHandler.isDrawnByPlayer();
     }
 
     private String[] getSquareCoordinates() {
@@ -248,7 +277,7 @@ public class ConsoleUI implements UI {
         field.getTiles().stream()
                 .filter(t -> t instanceof Square)
                 .map(s -> s.getPieces())
-                .forEach(p -> inputHandler.findPositionOfPieceInField(p, stringBuilder));
+                .forEach(p -> playerInputHandler.findPositionOfPiecesInField(p, stringBuilder));
 
         String[] squareCoordinates = stringBuilder.toString().split(" ");
         Arrays.sort(squareCoordinates);
@@ -256,15 +285,15 @@ public class ConsoleUI implements UI {
     }
 
     private void printScores() {
-            List<Score> scores = scoreService.getBestScores(GAME_NAME);
-            Collections.sort(scores);
-            Collections.reverse(scores);
+        List<Score> scores = scoreService.getBestScores(GAME_NAME);
+        Collections.sort(scores);
+        Collections.reverse(scores);
 
-            System.out.println("\u001B[34mLeaderboard: \u001B[0m");
-            for (Score score : scores) {
-                System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
-                        "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
-            }
+        System.out.println("\u001B[34mLeaderboard: \u001B[0m");
+        for (Score score : scores) {
+            System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
+                    "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
+        }
     }
 
     private void askToComment() {
@@ -273,15 +302,7 @@ public class ConsoleUI implements UI {
 
         switch (answer) {
             case "YES":
-                System.out.println("Please enter your comment (max. 200 characters):");
-                String comment = new Scanner(System.in).nextLine().strip();
-                try {
-                    commentService.addComment(new Comment(System.getProperty("user.name"), GAME_NAME, comment, new Date()));
-                } catch (CommentException e) {
-                    System.out.println("There was a error sending your comment. Please try again later");
-                    return;
-                }
-                System.out.println("Thank you for your comment, it was send.");
+                addComment();
                 return;
             case "NO":
                 return;
@@ -290,6 +311,18 @@ public class ConsoleUI implements UI {
                 askToComment();
                 break;
         }
+    }
+
+    private void addComment() {
+        System.out.println("Please enter your comment:");
+        String comment = new Scanner(System.in).nextLine().strip();
+        try {
+            commentService.addComment(new Comment(System.getProperty("user.name"), GAME_NAME, comment, new Date()));
+        } catch (CommentException e) {
+            System.out.println("There was a error sending your comment. Please try again later");
+            return;
+        }
+        System.out.println("Thank you for your comment, it has been sent.");
     }
 
     private void printFiveLatestComments() {
@@ -344,19 +377,7 @@ public class ConsoleUI implements UI {
 
         switch (answer) {
             case "YES":
-                System.out.println("Please enter your rating from 0 to 5");
-                int rating = new Scanner(System.in).nextInt();
-                if (rating < 0 || rating > 5) {
-                    System.out.println("You have entered invalid value.");
-                    askToRateTheGame();
-                }
-                try {
-                    ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, rating, new Date()));
-                } catch (RatingException e) {
-                    System.out.println("There was a error sending your rating. Please try again later");
-                    return;
-                }
-                System.out.println("Thank you for your comment, it was send.");
+                rateTheGame();
                 return;
             case "NO":
                 return;
@@ -365,6 +386,38 @@ public class ConsoleUI implements UI {
                 askToRateTheGame();
                 break;
         }
+    }
+
+    private void rateTheGame() {
+        System.out.println("Please enter your rating from 0 to 5");
+        int rating = new Scanner(System.in).nextInt();
+        if (rating < 0 || rating > 5) {
+            System.out.println("You have entered invalid value.");
+            askToRateTheGame();
+        }
+        try {
+            ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, rating, new Date()));
+        } catch (RatingException e) {
+            System.out.println("There was a error sending your rating. Please try again later");
+            return;
+        }
+        System.out.println("Thank you for your rating.");
+    }
+
+    private void gameLoop() {
+        printField();
+        printSquareCoordinates();
+        if (isOpponentBot && field.getCurrentPlayer() == Player.WHITE) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            botOpponentInputHandler.handleInput();
+        } else {
+            playerInputHandler.handleInput();
+        }
+
     }
 
 
