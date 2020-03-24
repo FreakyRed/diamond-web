@@ -7,6 +7,12 @@
     <groupId>sk.tuke.fei</groupId>
     <artifactId>gamestudio_martin_frajkor</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+
+    <name>gamestudio</name>
+    <description>Gamestudio Project</description>
+
     <build>
         <plugins>
             <plugin>
