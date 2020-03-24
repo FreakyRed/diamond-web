@@ -11,10 +11,9 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PlayerInputHandler extends InputHandler{
+public class PlayerInputHandler extends InputHandler {
 
     private Scanner scanner = new Scanner(System.in);
-    private boolean drawnByPlayer = false;
 
     private final Pattern INPUT_PATTERN_PLACEMENT = Pattern.compile("\\s*([A-U])([1-9])\\s*");
     private final Pattern INPUT_PATTERN_MOVEMENT = Pattern.compile("\\s*(M)(([A-U])([1-9]))(([A-U])([1-9]))\\s*");
@@ -39,10 +38,8 @@ public class PlayerInputHandler extends InputHandler{
         if (line.equals("EXIT")) {
             System.exit(0);
         } else if (line.equals("DRAW")) {
-            if (proposeDraw()) {
-                return;
-            }
-            handleInputForPlacementPhase();
+            proposeDraw();
+            if(!isDrawnByPlayer()) {handleInputForPlacementPhase();}
         }
         Matcher matcherPlace = INPUT_PATTERN_PLACEMENT.matcher(line);
         Matcher matcherShow = INPUT_PATTERN_SHOW_CONNECTED.matcher(line);
@@ -69,8 +66,8 @@ public class PlayerInputHandler extends InputHandler{
             return;
         }
 
-        for(int i = 2; i < stringBuilder.length(); i += 3){
-            stringBuilder.insert(i," ");
+        for (int i = 2; i < stringBuilder.length(); i += 3) {
+            stringBuilder.insert(i, " ");
         }
         System.out.println("Pieces connected to " + matcher.group(2) + ": " + stringBuilder.toString());
     }
@@ -98,20 +95,17 @@ public class PlayerInputHandler extends InputHandler{
         if (line.equals("EXIT")) {
             System.exit(0);
         } else if (line.equals("DRAW")) {
-            if (proposeDraw()) {
-                return;
-            }
-            handleInputForMovementPhase();
+            proposeDraw();
+            if(!isDrawnByPlayer()) handleInputForMovementPhase();
         }
 
         Matcher moveMatcher = INPUT_PATTERN_MOVEMENT.matcher(line);
         Matcher removeMatcher = INPUT_PATTERN_REMOVE.matcher(line);
         Matcher showMatcher = INPUT_PATTERN_SHOW_CONNECTED.matcher(line);
 
-        if(showMatcher.matches()) {
+        if (showMatcher.matches()) {
             showConnectedPieces(showMatcher);
-        }
-        else if (moveMatcher.matches()) {
+        } else if (moveMatcher.matches()) {
             parseInputAndMovePiece(moveMatcher);
         } else if (removeMatcher.matches()) {
             removeNeutralPiece(removeMatcher);
@@ -170,24 +164,20 @@ public class PlayerInputHandler extends InputHandler{
         }
     }
 
-    private boolean proposeDraw() {
+    @Override
+    void proposeDraw() {
         System.out.println("Player proposed a draw. Do you wish to draw the game?[yes/no]");
-        String answer = scanner.nextLine().toUpperCase();
+        String answer = scanner.nextLine().strip().toUpperCase();
 
         if (answer.equals("YES")) {
-            this.drawnByPlayer = true;
-            return true;
+            setDrawnByPlayer(true);
         } else if (answer.equals("NO")) {
             System.out.println("You have refused to draw the game. Game continues.");
-            return false;
+        } else {
+            System.out.println("Wrong choice.");
         }
-        System.out.println("Wrong choice.");
-        return false;
     }
 
-    public boolean isDrawnByPlayer() {
-        return drawnByPlayer;
-    }
 
     @Override
     public void findPositionOfPiecesInField(List<Piece> pieceList, StringBuilder stringBuilder) {

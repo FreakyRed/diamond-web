@@ -70,17 +70,22 @@ public class ConsoleUI implements UI {
             System.out.println("The game has been drawn. No captures or removes in last 50 turns, or no move was possible.");
         }
 
-        if (playerInputHandler.isDrawnByPlayer()) {
+        if (isDrawn()) {
             System.out.println("The game has been drawn.");
         }
 
         if (field.getGameState() == GameState.SOLVED) {
-            System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
-            scoreService.addScore(
-                    new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Timestamp(new Date().getTime())));
-            System.out.println("Entered your score: " + field.getScore() + " into the database");
+            if (isOpponentBot && field.getCurrentPlayer() == Player.WHITE) {
+                System.out.println("Unfortunately, you have lost. Keep your head up and try again.");
+            } else {
+                System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
+                String name = askForPlayerName();
+                addScore(name);
+            }
         }
     }
+
+
 
     private void printCurrentGameInformation() {
         System.out.print("\u001B[34mGamephase: \u001B[0m" + field.getGamePhase() +
@@ -223,6 +228,8 @@ public class ConsoleUI implements UI {
             case "YES":
                 System.out.println("Starting the game again.");
                 this.field = new Field();
+                this.playerInputHandler = new PlayerInputHandler(field);
+                this.isOpponentBot = false;
                 run();
                 return;
             case "NO":
@@ -407,6 +414,7 @@ public class ConsoleUI implements UI {
     private void gameLoop() {
         printField();
         printSquareCoordinates();
+
         if (isOpponentBot && field.getCurrentPlayer() == Player.WHITE) {
             try {
                 Thread.sleep(2000);
@@ -418,6 +426,20 @@ public class ConsoleUI implements UI {
             playerInputHandler.handleInput();
         }
 
+    }
+
+    private String askForPlayerName(){
+        System.out.println("\u001B[35mPlease enter your name(if nothing has been entered, default will be used):\u001B[0m");
+        String name = new Scanner(System.in).nextLine().strip().toUpperCase();
+
+        if(name.isEmpty()) return System.getProperty("user.name").toUpperCase();
+        else return name;
+    }
+
+    private void addScore(String name){
+        scoreService.addScore(
+                new Score(GAME_NAME, name, field.getScore(), new Timestamp(new Date().getTime())));
+        System.out.println("Entered your score: " + field.getScore() + " into the database as " + name);
     }
 
 

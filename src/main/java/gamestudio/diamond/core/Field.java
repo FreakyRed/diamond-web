@@ -225,7 +225,7 @@ public class Field {
 
     public int getScore() {
         long numberOfPiecesNotEmpty = Arrays.stream(getAllPieces())
-                .filter(p -> p.getPieceType() != PieceType.NEUTRAL)
+                .filter(p -> p.getPieceType() != PieceType.EMPTY)
                 .count();
 
         long numberOfRedPieces = Arrays.stream(getAllPieces())

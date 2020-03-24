@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class EasyBotInputHandler extends InputHandler {
     private Random random = new Random();
-    private final static String BOT_NAME = "\u001B[34mEasyBot\u001B[0m";
+    private final String BOT_NAME = "\u001B[34mEasyBot\u001B[0m";
 
     public EasyBotInputHandler(Field field) {
         super(field);
@@ -62,9 +62,10 @@ public class EasyBotInputHandler extends InputHandler {
     }
 
     @Override
-    public boolean isDrawnByPlayer() {
-        return true;
+    void proposeDraw() {
+        setDrawnByPlayer(true);
     }
+
 
     @Override
     public void findPositionOfPiecesInField(List<Piece> pieces, StringBuilder stringBuilder) {
