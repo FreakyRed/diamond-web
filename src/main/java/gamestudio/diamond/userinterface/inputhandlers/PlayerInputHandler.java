@@ -84,7 +84,7 @@ public class PlayerInputHandler extends InputHandler {
             if (getField().placePiece(row, col)) {
                 System.out.println("Placed " + currentPlayer + " piece to " + matcher.group(1) + matcher.group(2));
             } else {
-                System.out.println("Entered coordinates are not within the field");
+                System.out.println("Unable to place your piece to specified position");
             }
         } catch (WrongGamePhaseException e) {
             System.out.println(e.toString());

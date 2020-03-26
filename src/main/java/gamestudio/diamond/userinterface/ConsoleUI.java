@@ -425,6 +425,8 @@ public class ConsoleUI implements UI {
             playerInputHandler.handleInput();
         }
 
+        System.out.println();
+        System.out.println();
     }
 
     private void addScore(){
