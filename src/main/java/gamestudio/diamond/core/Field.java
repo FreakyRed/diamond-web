@@ -16,7 +16,7 @@ public class Field {
     private Player currentPlayer = Player.BLACK;
 
     private static int turnsWithoutCaptureOrRemove = 0;
-    private static final int MAX_PIECES = 8;
+    private static final int MAX_PIECES = 24;
 
     public Field() {
         initializeField();
