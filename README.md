@@ -1,9 +1,10 @@
-THIS IS A GAME STUDIO PROJECT FOR COMPONENT PROGRAMMING CLASS:
-STILL IN DEVELOPMENT
+**THIS IS A GAME STUDIO PROJECT FOR COMPONENT PROGRAMMING CLASS**
 
-GAME ASSIGNED : Diamond a.k.a Kensington
+**GAME ASSIGNED :** Diamond a.k.a Kensington
+Youtube link: [https://www.youtube.com/watch?v=jgAZ0rJFdGQ]
 
-DESCRIPTION FROM WIKIPEDIA: 
+
+**DESCRIPTION FROM WIKIPEDIA: **
 Diamond is a two-player abstract strategy board game invented by Larry Back. 
 The invention was inspired by the game Kensington, which uses a similar 
 board pattern and game objective. Rules for Diamond were conceived in 1985
@@ -11,9 +12,9 @@ and finalized in 1994. Diamond introduces a new board geometry and
 neutral pieces, with the aim of enhancing the game dynamic and 
 lowering the potential for draws. 
 
-NUMBER OF PLAYERS : 2
+**NUMBER OF PLAYERS :** 2
 
-GAME RULES: 
+**GAME RULES: **
 The game begins with an empty Diamond board. 
 Black moves first, then turns alternate. 
 (To offset any advantage Black has in moving first, the pie rule is used:
