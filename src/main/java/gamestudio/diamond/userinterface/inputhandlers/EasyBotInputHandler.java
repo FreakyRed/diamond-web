@@ -97,7 +97,7 @@ public class EasyBotInputHandler extends InputHandler {
         try {
             getField().movePiece(rowFrom, colFrom, rowTo, colTo);
             System.out.println(BOT_NAME + " moved piece from " +
-                    (char) (rowFrom + 'A') + (colFrom + 1) + "to " + (char) (rowTo + 'A') + (colTo + 1));
+                    (char) (rowFrom + 'A') + (colFrom + 1) + " to " + (char) (rowTo + 'A') + (colTo + 1));
         } catch (WrongGamePhaseException e) {
             System.out.println("Wrong gamephase for movement command");
         } catch (PiecesException e) {

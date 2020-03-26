@@ -395,12 +395,12 @@ public class ConsoleUI implements UI {
     }
 
     private void rateTheGame() {
-        System.out.println("Please enter your rating from 0 to 5");
-        int rating = new Scanner(System.in).nextInt();
-        if (rating < 0 || rating > 5) {
-            System.out.println("You have entered invalid value.");
-            askToRateTheGame();
-        }
+        int rating;
+        do {
+            System.out.println("Please enter your rating from 0 to 5");
+            rating = new Scanner(System.in).nextInt();
+        }while(rating < 0 || rating > 5);
+
         try {
             ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, rating, new Date()));
         } catch (RatingException e) {
