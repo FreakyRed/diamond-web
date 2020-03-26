@@ -79,8 +79,7 @@ public class ConsoleUI implements UI {
                 System.out.println("Unfortunately, you have lost. Keep your head up and try again.");
             } else {
                 System.out.println("Congratulations " + field.getCurrentPlayer().toString() + " player won!");
-                String name = askForPlayerName();
-                addScore(name);
+                addScore();
             }
         }
     }
@@ -428,18 +427,10 @@ public class ConsoleUI implements UI {
 
     }
 
-    private String askForPlayerName(){
-        System.out.println("\u001B[35mPlease enter your name(if nothing has been entered, default will be used):\u001B[0m");
-        String name = new Scanner(System.in).nextLine().strip().toUpperCase();
-
-        if(name.isEmpty()) return System.getProperty("user.name").toUpperCase();
-        else return name;
-    }
-
-    private void addScore(String name){
+    private void addScore(){
         scoreService.addScore(
-                new Score(GAME_NAME, name, field.getScore(), new Timestamp(new Date().getTime())));
-        System.out.println("Entered your score: " + field.getScore() + " into the database as " + name);
+                new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Timestamp(new Date().getTime())));
+        System.out.println("Entered your score: " + field.getScore() + " into the database as " + System.getProperty("user.name"));
     }
 
 

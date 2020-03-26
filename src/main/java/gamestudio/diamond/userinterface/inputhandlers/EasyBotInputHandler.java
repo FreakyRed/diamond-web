@@ -37,17 +37,24 @@ public class EasyBotInputHandler extends InputHandler {
 
 
     private void movePiece() {
-        try {
-            int rowFrom = 0, colFrom = 0, rowTo = 0, colTo = 0;
-            getCoordinatesOfPiecesToMove(rowFrom,colFrom,rowTo,colTo);
-            getField().movePiece(rowFrom, colFrom, rowTo, colTo);
-            System.out.println(BOT_NAME + " moved piece from " +
-                    (char) (rowFrom + 'A') + (colFrom + 1) + "to " + (char) (rowTo + 'A') + (colTo + 1));
-        } catch (WrongGamePhaseException e) {
-            System.out.println("Wrong gamephase for movement command");
-        } catch (PiecesException e) {
-            //ignore
+        int rowFrom = 0, colFrom = 0, rowTo = 0, colTo = 0;
+
+        Piece piece = getRandomPiece();
+        Piece connectedEmptyPiece = getRandomConnectedPieceTo(piece);
+
+        for (int row = 0; row < getField().getField().length; row++) {
+            for (int col = 0; col < getField().getField()[row].length; col++) {
+                if (piece == getField().getField()[row][col]) {
+                    colFrom = col;
+                    rowFrom = row;
+                } else if (connectedEmptyPiece == getField().getField()[row][col]) {
+                    colTo = col;
+                    rowTo = row;
+                }
+            }
+            tryToMove(rowFrom,colFrom,rowTo,colTo);
         }
+
 
 
     }
@@ -86,20 +93,15 @@ public class EasyBotInputHandler extends InputHandler {
                 .get();
     }
 
-    private void getCoordinatesOfPiecesToMove(int rowFrom, int colFrom, int rowTo, int colTo){
-        Piece piece = getRandomPiece();
-        Piece connectedEmptyPiece = getRandomConnectedPieceTo(piece);
-
-        for (int row = 0; row < getField().getField().length; row++) {
-            for (int col = 0; col < getField().getField()[row].length; col++) {
-                if (piece == getField().getField()[row][col]) {
-                    colFrom = col;
-                    rowFrom = row;
-                } else if (connectedEmptyPiece == getField().getField()[row][col]) {
-                    colTo = col;
-                    rowTo = row;
-                }
-            }
+    private void tryToMove(int rowFrom, int colFrom, int rowTo, int colTo){
+        try {
+            getField().movePiece(rowFrom, colFrom, rowTo, colTo);
+            System.out.println(BOT_NAME + " moved piece from " +
+                    (char) (rowFrom + 'A') + (colFrom + 1) + "to " + (char) (rowTo + 'A') + (colTo + 1));
+        } catch (WrongGamePhaseException e) {
+            System.out.println("Wrong gamephase for movement command");
+        } catch (PiecesException e) {
+            //DO NOTHING
         }
     }
 

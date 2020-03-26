@@ -41,7 +41,6 @@ public class PlayerInputHandler extends InputHandler {
             proposeDraw();
             if (!isDrawnByPlayer()) {
                 handleInputForPlacementPhase();
-            } else {
                 return;
             }
         }
@@ -100,7 +99,8 @@ public class PlayerInputHandler extends InputHandler {
             System.exit(0);
         } else if (line.equals("DRAW")) {
             proposeDraw();
-            if (!isDrawnByPlayer()) handleInputForMovementPhase();
+            if (!isDrawnByPlayer()) {handleInputForMovementPhase();
+                return;}
         }
 
         Matcher moveMatcher = INPUT_PATTERN_MOVEMENT.matcher(line);
