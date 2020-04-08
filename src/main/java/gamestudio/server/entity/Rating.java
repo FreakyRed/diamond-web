@@ -1,12 +1,33 @@
 package gamestudio.server.entity;
 
+import gamestudio.server.service.rating.CompositeRatingKey;
+
+import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Rating {
+
+@Entity
+@IdClass(CompositeRatingKey.class)
+@NamedQueries({
+        @NamedQuery(name = "Rating.getRating",
+                query = "SELECT r.rating FROM Rating r WHERE r.game=:game AND r.player=:player"
+        ),
+        @NamedQuery(name = "Rating.getAverageRating",
+                query = "SELECT AVG(r.rating) FROM Rating r WHERE r.game=:game")}
+)
+public class Rating{
+
+    @Id
     private String player;
+
+    @Id
     private String game;
+
     private int rating;
     private Date ratedon;
+
+    public Rating(){}
 
     public Rating(String player, String game, int rating, Date ratedon) {
         this.player = player;

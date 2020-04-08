@@ -22,17 +22,19 @@ import java.sql.Timestamp;
 import java.util.*;
 
 public class ConsoleUI implements UI {
+    @Autowired
+    private ScoreService scoreService;
+
+    @Autowired
+    private CommentService commentService;
+
+    @Autowired
+    private RatingService ratingService;
+
     private Field field;
     private InputHandler playerInputHandler;
     private InputHandler botOpponentInputHandler;
     private boolean isOpponentBot = false;
-
-
-    @Autowired
-    private ScoreService scoreService;
-
-    private CommentService commentService = new CommentServiceJDBC();
-    private RatingService ratingService = new RatingServiceJDBC();
 
     private static final String GAME_NAME = "Diamond";
 
@@ -306,7 +308,7 @@ public class ConsoleUI implements UI {
             }
         }
         catch (Exception e){
-            System.out.println("Could not print overall scores." + e.getMessage());
+            System.out.println("Could not print overall scores. " + e.getMessage());
         }
     }
 
@@ -355,8 +357,8 @@ public class ConsoleUI implements UI {
                 System.out.println("\u001B[33m" + currentComment.getPlayer().toUpperCase() + "\u001B[0m" +
                         "       " + currentComment.getComment() + "      " + currentComment.getCommentedOn());
             }
-        } catch (CommentException e) {
-            System.out.println("Something went wrong, unable to load five last comments");
+        } catch (Exception e) {
+            System.out.println("Something went wrong, unable to load five last comments " + e.getMessage());
         }
     }
 
@@ -370,8 +372,8 @@ public class ConsoleUI implements UI {
         try {
             int averageRating = ratingService.getAverageRating(GAME_NAME);
             System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        } catch (RatingException e) {
-            System.out.println("Unable to get average rating for this game");
+        } catch (Exception e) {
+            System.out.println("Unable to get average rating for this game " + e.getMessage());
         }
     }
 
@@ -379,8 +381,8 @@ public class ConsoleUI implements UI {
         try {
             int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
             System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
-        } catch (RatingException e) {
-            System.out.println("You have not rated this game yet.");
+        } catch (Exception e) {
+            System.out.println("You have not rated this game yet. " + e.getMessage());
         }
     }
 
@@ -442,8 +444,8 @@ public class ConsoleUI implements UI {
                     new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Timestamp(new Date().getTime())));
             System.out.println("Entered your score: " + field.getScore() + " into the database as " + System.getProperty("user.name"));
         }
-        catch (Exception e){
-            System.out.println("Could not add your score" + e.getMessage());
+        catch (ScoreException e){
+            System.out.println("Could not add your score " + e.getMessage());
         }
     }
 

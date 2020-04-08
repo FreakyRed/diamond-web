@@ -2,6 +2,10 @@ package gamestudio;
 
 import gamestudio.game.diamond.frajkor.core.Field;
 import gamestudio.game.diamond.frajkor.userinterface.ConsoleUI;
+import gamestudio.server.service.comment.CommentService;
+import gamestudio.server.service.comment.CommentServiceJPA;
+import gamestudio.server.service.rating.RatingService;
+import gamestudio.server.service.rating.RatingServiceJPA;
 import gamestudio.server.service.score.ScoreService;
 import gamestudio.server.service.score.ScoreServiceJPA;
 import org.springframework.boot.CommandLineRunner;
@@ -31,6 +35,16 @@ public class Main {
     @Bean
     public Field diamondFrajkorField(){
         return new Field();
+    }
+
+    @Bean
+    public RatingService ratingService(){
+        return new RatingServiceJPA();
+    }
+
+    @Bean
+    public CommentService commentService(){
+        return new CommentServiceJPA();
     }
 
     @Bean

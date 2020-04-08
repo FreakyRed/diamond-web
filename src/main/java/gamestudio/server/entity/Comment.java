@@ -1,12 +1,28 @@
 package gamestudio.server.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.NamedQuery;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Comment {
+@Entity
+@NamedQuery(name = "Comment.getComments",
+        query = "SELECT c FROM Comment c WHERE c.game=:game ORDER BY c.commentedOn DESC")
+public class Comment implements Serializable{
+
+    @Id
+    @GeneratedValue
+    private int id;
+
     private String player;
     private String game;
     private String comment;
     private Date commentedOn;
+
+    public Comment(){
+    }
 
     public Comment(String player, String game, String comment, Date commentedOn) {
         this.player = player;
@@ -47,9 +63,18 @@ public class Comment {
         this.commentedOn = commentedOn;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Comment{");
+        sb.append("id= ").append(id).append(", ");
         sb.append("player='").append(player).append('\'');
         sb.append(", game='").append(game).append('\'');
         sb.append(", comment='").append(comment).append('\'');
