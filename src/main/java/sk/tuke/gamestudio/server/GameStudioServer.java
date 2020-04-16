@@ -1,5 +1,10 @@
 package sk.tuke.gamestudio.server;
 
+import sk.tuke.gamestudio.entity.Rating;
+import sk.tuke.gamestudio.service.comment.CommentService;
+import sk.tuke.gamestudio.service.comment.CommentServiceJPA;
+import sk.tuke.gamestudio.service.rating.RatingService;
+import sk.tuke.gamestudio.service.rating.RatingServiceJPA;
 import sk.tuke.gamestudio.service.score.ScoreService;
 import sk.tuke.gamestudio.service.score.ScoreServiceJPA;
 import org.springframework.boot.SpringApplication;
@@ -19,5 +24,15 @@ public class GameStudioServer {
     @Bean
     public ScoreService scoreService(){
         return new ScoreServiceJPA();
+    }
+
+    @Bean
+    public CommentService commentService(){
+        return new CommentServiceJPA();
+    }
+
+    @Bean
+    public RatingService ratingService(){
+        return new RatingServiceJPA();
     }
 }
