@@ -42,7 +42,7 @@ public class RatingServiceJDBC implements RatingService {
         try (PreparedStatement updateStatement = connection.prepareStatement(UPDATE_RATING)) {
             if (resultSet.getInt(3) != rating.getRating()) {
                 updateStatement.setInt(1, rating.getRating());
-                updateStatement.setTimestamp(2, new Timestamp(rating.getRatedon().getTime()));
+                updateStatement.setTimestamp(2, new Timestamp(rating.getRatedOn().getTime()));
                 updateStatement.setString(3, rating.getPlayer());
                 updateStatement.setString(4, rating.getGame());
 
@@ -56,7 +56,7 @@ public class RatingServiceJDBC implements RatingService {
             insertStatement.setString(1, rating.getPlayer());
             insertStatement.setString(2, rating.getGame());
             insertStatement.setInt(3, rating.getRating());
-            insertStatement.setTimestamp(4, new Timestamp(rating.getRatedon().getTime()));
+            insertStatement.setTimestamp(4, new Timestamp(rating.getRatedOn().getTime()));
 
             insertStatement.executeUpdate();
         }

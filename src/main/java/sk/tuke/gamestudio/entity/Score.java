@@ -74,15 +74,14 @@ public class Score implements Comparable<Score>, Serializable {
     @Override
     public String toString() {
         return "Score{" +
-                "id=" + ident + ", " +
-                "game='" + game + '\'' +
-                ", player='" + player + '\'' +
+                "player='" + player + '\'' +
                 ", points=" + points +
+                ", game='" + game + '\'' +
                 ", playedOn=" + playedOn +
                 '}';
     }
 
-    @Override
+        @Override
     public int compareTo(Score o) {
         if (o == null) return -1;
         return this.getPoints() - o.getPoints();

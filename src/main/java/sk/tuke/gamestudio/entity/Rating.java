@@ -25,7 +25,7 @@ public class Rating implements Serializable{
     private String game;
 
     private int rating;
-    private Date ratedon;
+    private Date ratedOn;
 
     public Rating(){}
 
@@ -33,7 +33,7 @@ public class Rating implements Serializable{
         this.player = player;
         this.game = game;
         this.rating = rating;
-        this.ratedon = ratedon;
+        this.ratedOn = ratedon;
     }
 
     public String getPlayer() {
@@ -60,12 +60,12 @@ public class Rating implements Serializable{
         this.rating = rating;
     }
 
-    public Date getRatedon() {
-        return ratedon;
+    public Date getRatedOn() {
+        return ratedOn;
     }
 
-    public void setRatedon(Date ratedon) {
-        this.ratedon = ratedon;
+    public void setRatedOn(Date ratedOn) {
+        this.ratedOn = ratedOn;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Rating implements Serializable{
         sb.append("player='").append(player).append('\'');
         sb.append(", game='").append(game).append('\'');
         sb.append(", rating=").append(rating);
-        sb.append(", ratedon=").append(ratedon);
+        sb.append(", ratedOn=").append(ratedOn);
         sb.append('}');
         return sb.toString();
     }
