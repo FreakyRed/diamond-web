@@ -307,8 +307,8 @@ public class ConsoleUI implements UI {
                         "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
             }
         }
-        catch (Exception e){
-            System.out.println("Could not print overall scores. " + e.getMessage());
+        catch (ScoreException e){
+            System.out.println("Could not print overall scores. ");
         }
     }
 
@@ -357,8 +357,8 @@ public class ConsoleUI implements UI {
                 System.out.println("\u001B[33m" + currentComment.getPlayer().toUpperCase() + "\u001B[0m" +
                         "       " + currentComment.getComment() + "      " + currentComment.getCommentedOn());
             }
-        } catch (Exception e) {
-            System.out.println("Something went wrong, unable to load five last comments " + e.getMessage());
+        } catch (CommentException e) {
+            System.out.println("Something went wrong, unable to load five last comments ");
         }
     }
 
@@ -372,8 +372,8 @@ public class ConsoleUI implements UI {
         try {
             int averageRating = ratingService.getAverageRating(GAME_NAME);
             System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        } catch (Exception e) {
-            System.out.println("Unable to get average rating for this game " + e.getMessage());
+        } catch (RatingException e) {
+            System.out.println("Unable to get average rating for this game ");
         }
     }
 
@@ -381,8 +381,8 @@ public class ConsoleUI implements UI {
         try {
             int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
             System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
-        } catch (Exception e) {
-            System.out.println("You have not rated this game yet. " + e.getMessage());
+        } catch (RatingException e) {
+            System.out.println("You have not rated this game yet. ");
         }
     }
 
@@ -445,7 +445,7 @@ public class ConsoleUI implements UI {
             System.out.println("Entered your score: " + field.getScore() + " into the database as " + System.getProperty("user.name"));
         }
         catch (ScoreException e){
-            System.out.println("Could not add your score " + e.getMessage());
+            System.out.println("Could not add your score ");
         }
     }
 

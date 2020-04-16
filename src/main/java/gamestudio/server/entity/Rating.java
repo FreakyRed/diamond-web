@@ -16,7 +16,7 @@ import java.util.Date;
         @NamedQuery(name = "Rating.getAverageRating",
                 query = "SELECT AVG(r.rating) FROM Rating r WHERE r.game=:game")}
 )
-public class Rating{
+public class Rating implements Serializable{
 
     @Id
     private String player;
