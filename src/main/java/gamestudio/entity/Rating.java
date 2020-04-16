@@ -1,6 +1,6 @@
-package gamestudio.server.entity;
+package gamestudio.entity;
 
-import gamestudio.server.service.rating.CompositeRatingKey;
+import gamestudio.service.rating.CompositeRatingKey;
 
 import javax.persistence.*;
 import java.io.Serializable;

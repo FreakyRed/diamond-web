@@ -1,6 +1,6 @@
-package gamestudio.server.service.comment;
+package gamestudio.service.comment;
 
-import gamestudio.server.entity.Comment;
+import gamestudio.entity.Comment;
 
 import java.util.List;
 

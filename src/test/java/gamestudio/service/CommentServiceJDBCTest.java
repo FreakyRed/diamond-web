@@ -1,9 +1,9 @@
-package gamestudio.server.service;
+package gamestudio.service;
 
-import gamestudio.server.entity.Comment;
-import gamestudio.server.service.comment.CommentException;
-import gamestudio.server.service.comment.CommentService;
-import gamestudio.server.service.comment.CommentServiceJDBC;
+import gamestudio.entity.Comment;
+import gamestudio.service.comment.CommentException;
+import gamestudio.service.comment.CommentService;
+import gamestudio.service.comment.CommentServiceJDBC;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;

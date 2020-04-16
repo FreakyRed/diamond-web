@@ -1,9 +1,9 @@
-package gamestudio.server.service;
+package gamestudio.service;
 
-import gamestudio.server.entity.Rating;
-import gamestudio.server.service.rating.RatingException;
-import gamestudio.server.service.rating.RatingService;
-import gamestudio.server.service.rating.RatingServiceJDBC;
+import gamestudio.entity.Rating;
+import gamestudio.service.rating.RatingException;
+import gamestudio.service.rating.RatingService;
+import gamestudio.service.rating.RatingServiceJDBC;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;

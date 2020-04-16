@@ -1,4 +1,4 @@
-package gamestudio.server.entity;
+package gamestudio.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

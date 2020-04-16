@@ -2,12 +2,12 @@ package gamestudio;
 
 import gamestudio.game.diamond.frajkor.core.Field;
 import gamestudio.game.diamond.frajkor.userinterface.ConsoleUI;
-import gamestudio.server.service.comment.CommentService;
-import gamestudio.server.service.comment.CommentServiceJPA;
-import gamestudio.server.service.rating.RatingService;
-import gamestudio.server.service.rating.RatingServiceJPA;
-import gamestudio.server.service.score.ScoreService;
-import gamestudio.server.service.score.ScoreServiceJPA;
+import gamestudio.service.comment.CommentService;
+import gamestudio.service.comment.CommentServiceJPA;
+import gamestudio.service.rating.RatingService;
+import gamestudio.service.rating.RatingServiceJPA;
+import gamestudio.service.score.ScoreService;
+import gamestudio.service.score.ScoreServiceJPA;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

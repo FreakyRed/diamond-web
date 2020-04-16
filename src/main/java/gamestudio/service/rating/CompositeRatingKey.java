@@ -1,4 +1,4 @@
-package gamestudio.server.service.rating;
+package gamestudio.service.rating;
 
 import java.io.Serializable;
 

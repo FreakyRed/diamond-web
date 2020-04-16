@@ -1,6 +1,6 @@
-package gamestudio.server.service.score;
+package gamestudio.service.score;
 
-import gamestudio.server.entity.Score;
+import gamestudio.entity.Score;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
-package gamestudio.server.service.rating;
+package gamestudio.service.rating;
 
-import gamestudio.server.entity.Rating;
+import gamestudio.entity.Rating;
 
 public interface RatingService {
     void setRating(Rating rating) throws RatingException;

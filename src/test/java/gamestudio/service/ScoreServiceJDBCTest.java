@@ -1,9 +1,9 @@
-package gamestudio.server.service;
+package gamestudio.service;
 
-import gamestudio.server.entity.Score;
-import gamestudio.server.service.score.ScoreException;
-import gamestudio.server.service.score.ScoreService;
-import gamestudio.server.service.score.ScoreServiceJDBC;
+import gamestudio.entity.Score;
+import gamestudio.service.score.ScoreException;
+import gamestudio.service.score.ScoreService;
+import gamestudio.service.score.ScoreServiceJDBC;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;

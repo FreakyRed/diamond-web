@@ -1,4 +1,4 @@
-package gamestudio.server.service.comment;
+package gamestudio.service.comment;
 
 public class CommentException extends Exception {
     public CommentException(String message) {
