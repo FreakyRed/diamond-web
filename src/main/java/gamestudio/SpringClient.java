@@ -16,10 +16,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @SpringBootApplication
-public class Main {
+public class SpringClient {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class,args);
+        SpringApplication.run(SpringClient.class,args);
     }
 
     @Bean

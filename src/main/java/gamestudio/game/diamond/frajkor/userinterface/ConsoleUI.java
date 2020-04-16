@@ -18,6 +18,7 @@ import gamestudio.server.service.score.ScoreService;
 import gamestudio.server.service.score.ScoreServiceJDBC;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.NoResultException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -298,16 +299,19 @@ public class ConsoleUI implements UI {
     private void printScores() {
         try {
             List<Score> scores = scoreService.getBestScores(GAME_NAME);
+            System.out.println("\u001B[34mLeaderboard: \u001B[0m");
+
+            if (scores.isEmpty()) {
+                System.out.println("Leaderboard is empty");
+                return;
+            }
             Collections.sort(scores);
             Collections.reverse(scores);
-
-            System.out.println("\u001B[34mLeaderboard: \u001B[0m");
             for (Score score : scores) {
                 System.out.println("\u001B[33m" + score.getPlayer().toUpperCase() + "\u001B[0m" +
                         "     " + score.getPoints() + "     " + score.getPlayedOn().toString());
             }
-        }
-        catch (ScoreException e){
+        } catch (ScoreException e) {
             System.out.println("Could not print overall scores. ");
         }
     }
@@ -344,11 +348,15 @@ public class ConsoleUI implements UI {
     private void printFiveLatestComments() {
         try {
             List<Comment> commentList = commentService.getComments(GAME_NAME);
+            System.out.println("\u001B[34mLatest comments: \u001B[0m");
+            if (commentList.isEmpty()) {
+                System.out.println("Comment list for this game is empty.");
+                return;
+            }
             Collections.sort(commentList, (x, y) -> {
                 return y.getCommentedOn().compareTo(x.getCommentedOn());
             });
 
-            System.out.println("\u001B[34mLatest comments: \u001B[0m");
             for (int i = 0; i < commentList.size(); i++) {
                 if (i == 5) {
                     break;
@@ -372,7 +380,7 @@ public class ConsoleUI implements UI {
         try {
             int averageRating = ratingService.getAverageRating(GAME_NAME);
             System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        } catch (RatingException e) {
+        } catch (RatingException | NullPointerException | NoResultException e) {
             System.out.println("Unable to get average rating for this game ");
         }
     }
@@ -381,7 +389,7 @@ public class ConsoleUI implements UI {
         try {
             int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
             System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
-        } catch (RatingException e) {
+        } catch (RatingException | NoResultException e) {
             System.out.println("You have not rated this game yet. ");
         }
     }
@@ -443,8 +451,7 @@ public class ConsoleUI implements UI {
             scoreService.addScore(
                     new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Timestamp(new Date().getTime())));
             System.out.println("Entered your score: " + field.getScore() + " into the database as " + System.getProperty("user.name"));
-        }
-        catch (ScoreException e){
+        } catch (ScoreException e) {
             System.out.println("Could not add your score ");
         }
     }
