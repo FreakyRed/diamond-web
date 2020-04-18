@@ -1,5 +1,7 @@
 package sk.tuke.gamestudio.game.diamond.frajkor.userinterface;
 
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.inputhandlers.PlayerInputHandler;
 import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.inputhandlers.EasyBotInputHandler;
@@ -377,7 +379,7 @@ public class ConsoleUI implements UI {
         try {
             int averageRating = ratingService.getAverageRating(GAME_NAME);
             System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        } catch (RatingException | NullPointerException | NoResultException e) {
+        } catch (RatingException | NullPointerException | NoResultException | HttpServerErrorException e) {
             System.out.println("Unable to get average rating for this game ");
         }
     }
@@ -386,7 +388,7 @@ public class ConsoleUI implements UI {
         try {
             int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
             System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
-        } catch (RatingException | NoResultException e) {
+        } catch (RatingException | NullPointerException | NoResultException | HttpServerErrorException e) {
             System.out.println("You have not rated this game yet. ");
         }
     }

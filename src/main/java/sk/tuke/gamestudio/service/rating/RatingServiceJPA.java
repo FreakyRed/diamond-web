@@ -1,5 +1,7 @@
 package sk.tuke.gamestudio.service.rating;
 
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import sk.tuke.gamestudio.entity.Rating;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,18 +15,18 @@ public class RatingServiceJPA implements RatingService {
     private EntityManager entityManager;
 
     @Override
-    public void setRating(Rating rating) throws RatingException {
+    public void setRating(Rating rating){
         entityManager.merge(rating);
     }
 
     @Override
-    public int getAverageRating(String game) throws RatingException {
+    public int getAverageRating(String game){
         return ((Double) entityManager.createNamedQuery("Rating.getAverageRating")
                 .setParameter("game", game).getSingleResult()).intValue();
     }
 
     @Override
-    public int getRating(String game, String player) throws RatingException {
+    public int getRating(String game, String player){
         return (int) entityManager.createNamedQuery("Rating.getRating")
                 .setParameter("game", game)
                 .setParameter("player", player)

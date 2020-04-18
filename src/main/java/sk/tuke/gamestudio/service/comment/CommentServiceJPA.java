@@ -14,12 +14,12 @@ public class CommentServiceJPA implements CommentService {
     private EntityManager entityManager;
 
     @Override
-    public void addComment(Comment comment) throws CommentException {
+    public void addComment(Comment comment){
         entityManager.persist(comment);
     }
 
     @Override
-    public List<Comment> getComments(String game) throws CommentException {
+    public List<Comment> getComments(String game){
         return entityManager.createNamedQuery("Comment.getComments")
                 .setParameter("game", game).setMaxResults(5).getResultList();
     }
