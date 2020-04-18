@@ -14,12 +14,12 @@ public class ScoreServiceJPA implements ScoreService {
     private EntityManager entityManager;
 
     @Override
-    public void addScore(Score score){
+    public void addScore(Score score) throws ScoreException{
         entityManager.persist(score);
     }
 
     @Override
-    public List<Score> getBestScores(String game){
+    public List<Score> getBestScores(String game) throws ScoreException{
         return entityManager.createNamedQuery("Score.getBestScores").
                 setParameter("game", game).setMaxResults(10).getResultList();
     }
