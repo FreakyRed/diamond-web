@@ -36,7 +36,7 @@ public class ConsoleUI implements UI {
     private InputHandler botOpponentInputHandler;
     private boolean isOpponentBot = false;
 
-    private static final String GAME_NAME = "Diamond";
+    private static final String GAME_NAME = "diamond";
 
     public ConsoleUI(Field field) {
         this.field = field;
