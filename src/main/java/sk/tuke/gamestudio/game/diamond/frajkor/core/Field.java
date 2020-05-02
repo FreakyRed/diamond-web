@@ -235,4 +235,16 @@ public class Field {
 
         return (int) (100 * (numberOfPiecesNotEmpty + numberOfRedPieces));
     }
+
+    public int getRowCount(){
+        return field.length;
+    }
+
+    public int getColumnCount(int row){
+        return field[row].length;
+    }
+
+    public Piece getPiece(int row, int col){
+        return field[row][col];
+    }
 }
