@@ -379,7 +379,7 @@ public class ConsoleUI implements UI {
         try {
             int averageRating = ratingService.getAverageRating(GAME_NAME);
             System.out.println("\u001B[34mThe average rating \u001B[0mfor this game is: " + averageRating);
-        } catch (RatingException | NullPointerException | NoResultException | HttpServerErrorException e) {
+        } catch (RatingException | NullPointerException e) {
             System.out.println("Unable to get average rating for this game ");
         }
     }
@@ -388,7 +388,7 @@ public class ConsoleUI implements UI {
         try {
             int currentPlayerRating = ratingService.getRating(GAME_NAME, System.getProperty("user.name"));
             System.out.println("\u001B[34mYour current rating \u001B[0mis: " + currentPlayerRating);
-        } catch (RatingException | NullPointerException | NoResultException | HttpServerErrorException e) {
+        } catch (RatingException | NullPointerException e) {
             System.out.println("You have not rated this game yet. ");
         }
     }
