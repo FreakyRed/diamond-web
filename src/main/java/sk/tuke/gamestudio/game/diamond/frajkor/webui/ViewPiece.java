@@ -1,21 +1,20 @@
 package sk.tuke.gamestudio.game.diamond.frajkor.webui;
 
-import sk.tuke.gamestudio.game.diamond.frajkor.core.IPiece;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.Piece;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.PieceType;
 
-public class ViewPiece<P extends IPiece> {
-    private final P piece;
+public class ViewPiece {
+    private final Piece piece;
     private final int row;
     private final int column;
 
-    public ViewPiece(P piece, int row, int column) {
+    public ViewPiece(Piece piece, int row, int column) {
         this.piece = piece;
         this.row = row;
         this.column = column;
     }
 
-    public P getPiece() {
+    public Piece getPiece() {
         return piece;
     }
 
@@ -28,15 +27,15 @@ public class ViewPiece<P extends IPiece> {
     }
 
     public boolean isEmpty(){
-        return piece.getType() == PieceType.EMPTY;
+        return piece.getPieceType() == PieceType.EMPTY;
     }
 
     public boolean isTaken(){
-        return piece.getType() != PieceType.EMPTY;
+        return piece.getPieceType() != PieceType.EMPTY;
     }
 
     public String getType(){
-        return piece.getType().toString().toLowerCase();
+        return piece.getPieceType().toString().toLowerCase();
     }
 
     public String getName(){

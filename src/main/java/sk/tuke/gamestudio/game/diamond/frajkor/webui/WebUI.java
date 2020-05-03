@@ -67,13 +67,12 @@ public class WebUI {
             return;
         }
 
-        if (isGameEnded() && gameEnded) {
+        if (isGameEnded()) {
             gameEnded = true;
             if (isGameWon()) {
                 finalScore = field.getScore();
                 scoreService.addScore(new Score(GAME_NAME, System.getProperty("user.name"), finalScore, new Date()));
             }
-            return;
         }
 
     }
@@ -94,8 +93,8 @@ public class WebUI {
         return finalScore;
     }
 
-    public ViewPiece<?> getViewPiece(int row, int column) {
-        return new ViewPiece<>(field.getPiece(row, column), row, column);
+    public ViewPiece getViewPiece(int row, int column) {
+        return new ViewPiece(field.getPiece(row, column), row, column);
     }
 
 }

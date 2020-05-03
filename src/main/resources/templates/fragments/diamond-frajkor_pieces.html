@@ -5,17 +5,34 @@
 
 <th:block th:fragment="emptyPiece(viewPiece)">
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
-    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece<sk.tuke.gamestudio.game.diamond.frajkor.core.IPiece>" */-->
-    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="tile-link">
-        <img th:src="@{/images/diamond/frajkor/emptyPiece.png}" class="tile-mark" th:if="${viewPiece.isEmpty()}">
+    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
+    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
+        <div class="circle piece-empty" th:if="${viewPiece.isEmpty()}">
+        </div>
     </a>
 </th:block>
 
 <th:block th:fragment="neutralPiece(viewPiece)">
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
-    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece<sk.tuke.gamestudio.game.diamond.frajkor.core.IPiece>" */-->
-    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="tile-link">
-        <img th:src="@{/images/diamond/frajkor/redPiece.png}" class="tile-mark" th:if="${viewPiece.isTaken()}">
+    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
+    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
+        <div class="circle piece-neutral" th:if="${viewPiece.isTaken()}"></div>
+    </a>
+</th:block>
+
+<th:block th:fragment="blackPiece(viewPiece)">
+    <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
+    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
+    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
+        <div class="circle piece-black" th:if="${viewPiece.isTaken()}"></div>
+    </a>
+</th:block>
+
+<th:block th:fragment="whitePiece(viewPiece)">
+    <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
+    <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
+    <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
+        <div class="circle piece-white" th:if="${viewPiece.isTaken()}"></div>
     </a>
 </th:block>
 

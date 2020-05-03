@@ -7,7 +7,7 @@ import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.WrongPiece
 import java.util.ArrayList;
 import java.util.List;
 
-public class Piece  extends IPiece implements Comparable<Piece> {
+public class Piece implements Comparable<Piece> {
 
     private PieceType pieceType = PieceType.EMPTY;
     private List<Piece> connectedPieces = new ArrayList<>();

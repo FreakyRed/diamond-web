@@ -14,24 +14,30 @@
 <body>
     <h1>Diamond</h1>
 
-    <div class="gamePhase" th:with="gamePhase=${webUI.getField().getGamePhase()}"></div>
+<!--    <div class="gamePhase" th:text="gamePhase=${webUI.getField().getGamePhase()}"></div>-->
 
     <div class="field" th:with="field=${webUI.getField()}">
-        <div class="field__row" th:each="rowIdx: ${#numbers.sequence(0, field.getRowCount() - 1)}">
+        <span class="field__row" th:each="rowIdx: ${#numbers.sequence(0, field.getRowCount() - 1)}">
             <th:block th:each="colIdx: ${#numbers.sequence(0, field.getColumnCount(rowIdx) - 1)}">
                 <th:block th:with="viewPiece=${webUI.getViewPiece(rowIdx, colIdx)}">
                     <div th:data-state="${viewPiece.type}" th:class="'field__piece piece--type-' + ${viewPiece.type}"
-                         th:switch="${viewPiece.isEmpty()}">
-                        <th:block th:case="true">
+                         th:switch="${viewPiece.getType()}">
+                        <th:block th:case="empty">
+                            <div th:replace="fragments/diamond-frajkor_pieces :: emptyPiece(*{viewPiece})"></div>
+                        </th:block>
+                        <th:block th:case="neutral">
                             <div th:replace="fragments/diamond-frajkor_pieces :: neutralPiece(*{viewPiece})"></div>
                         </th:block>
-                        <th:block th:case="false">
-                            <div th:replace="fragments/diamond-frajkor_pieces :: neutralPiece(*{viewPiece})"></div>
+                        <th:block th:case="white">
+                            <div th:replace="fragments/diamond-frajkor_pieces :: whitePiece(*{viewPiece})"></div>
+                        </th:block>
+                        <th:block th:case="black">
+                            <div th:replace="fragments/diamond-frajkor_pieces :: blackPiece(*{viewPiece})"></div>
                         </th:block>
                     </div>
                 </th:block>
             </th:block>
-        </div>
+        </span>
     </div>
 
 
@@ -44,10 +50,7 @@
         <button>New Game</button>
     </a>
 
-    <a href="?command=place">
-        <button>Place</button>
-    </a>
-
+    <div class="tables">
     <h2>Hall of fame</h2>
 
     <!-- Hall of Fame - Server side generation - Thymeleaf -->
@@ -69,10 +72,11 @@
         </tr>
         </tbody>
     </table>
+    </div>
 
     <script>
     function handleTileRightClick(piece) {
-        var link = piece.querySelector(".tile-link").href;
+        var link = piece.querySelector(".piece-link").href;
         var command = piece.attributes['data-state'].value === 'empty' ? "place" : "";
         window.location.href = link + '&command=' + command;
     }
