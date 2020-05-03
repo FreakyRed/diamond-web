@@ -12,10 +12,9 @@
 </head>
 
 <body>
-    <h1>Diamond</h1>
+<h1>Diamond</h1>
 
 <!--    <div class="gamePhase" th:text="gamePhase=${webUI.getField().getGamePhase()}"></div>-->
-
     <div class="field" th:with="field=${webUI.getField()}">
         <span class="field__row" th:each="rowIdx: ${#numbers.sequence(0, field.getRowCount() - 1)}">
             <th:block th:each="colIdx: ${#numbers.sequence(0, field.getColumnCount(rowIdx) - 1)}">
@@ -38,57 +37,98 @@
                 </th:block>
             </th:block>
         </span>
-    </div>
+</div>
 
 
 <!--    <div th:if="${webUI.isGameLost()}" class="game-status game-status&#45;&#45;lost">Game Over</div>-->
-    <div th:if="${webUI.isGameWon()}" class="game-status game-status--won"
-         th:text="'You won! Your score is ' + ${webUI.getFinalScore()}"></div>
+<div th:text="'Current game state: ' + ${webUI.getGameState()}"></div>
+<div th:text="'Current game phase: ' + ${webUI.getGamePhase()}"></div>
+<div th:if="${webUI.isGameWon()}" class="game-status game-status--won"
+     th:text="'You won! Your score is ' + ${webUI.getFinalScore()}"></div>
 
 
-    <a href="?command=new">
-        <button>New Game</button>
-    </a>
+<a href="?command=new">
+    <button>New Game</button>
+</a>
 
+<div class="container">
     <div class="tables">
-    <h2>Hall of fame</h2>
+        <h2>Hall of fame</h2>
 
-    <!-- Hall of Fame - Server side generation - Thymeleaf -->
-    <table>
-        <thead>
-        <tr>
-            <th>Game</th>
-            <th>Player</th>
-            <th>Points</th>
-            <th>Played on</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="score: ${scores}">
-            <td th:text="${score.game}"></td>
-            <td th:text="${score.player}"></td>
-            <td th:text="${score.points}"></td>
-            <td th:text="${score.playedOn}"></td>
-        </tr>
-        </tbody>
-    </table>
+        <!-- Hall of Fame - Server side generation - Thymeleaf -->
+        <table>
+            <thead>
+            <tr>
+                <th>Game</th>
+                <th>Player</th>
+                <th>Points</th>
+                <th>Played on</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="score: ${scores}">
+                <td th:text="${score.game}"></td>
+                <td th:text="${score.player}"></td>
+                <td th:text="${score.points}"></td>
+                <td th:text="${score.playedOn}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2>Player Ratings</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Average Rating</th>
+            </tr>
+            </thead>
+            <tbody
+                <td th:text="${averageRating}"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2>Comments</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>Game</th>
+                <th>Player</th>
+                <th>Comment</th>
+                <th>Commented on</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="comment: ${comments}">
+                <td th:text="${comment.game}"></td>
+                <td th:text="${comment.player}"></td>
+                <td th:text="${comment.comment}"></td>
+                <td th:text="${comment.commentedOn}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+</div>
 
-    <script>
+<script>
     function handleTileRightClick(piece) {
         var link = piece.querySelector(".piece-link").href;
-        var command = piece.attributes['data-state'].value === 'empty' ? "place" : "";
+        var command = piece.attributes['data-state'].value === 'empty' ? "highlight" : "";
         window.location.href = link + '&command=' + command;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".piece--type-empty").forEach(function (element) {
+        document.querySelectorAll(".piece-link").forEach(function (element) {
             element.addEventListener("contextmenu", function (event) {
                 event.preventDefault();
                 handleTileRightClick(element);
             });
         });
     });
-    </script>
+</script>
+
+<script>
+
+</script>
 </body>
 </html>

@@ -22,7 +22,7 @@ public class RatingServiceRestClient implements RatingService {
         try {
             return restTemplate.getForEntity(URL + "/" + game, int.class).getBody();
         } catch (HttpServerErrorException e){
-            throw new RatingException("Error getting average rating",e);
+            return 0;
         }
     }
 
@@ -31,7 +31,7 @@ public class RatingServiceRestClient implements RatingService {
         try {
             return restTemplate.getForEntity(URL + "/" + game + "/" + player, int.class).getBody();
         }catch (HttpServerErrorException e){
-            throw new RatingException("Error getting rating",e);
+            return 0;
         }
     }
 }

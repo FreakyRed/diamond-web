@@ -11,15 +11,20 @@ h1{
 }
 
 .field{
-    display: flex;
-    flex: 1;
+    justify-content: center;
+    text-align : center;
     flex-direction: column;
-    width: 25%;
+    width: 50%;
+    background: whitesmoke;
+    float: left;
 }
 
 .field__row {
+    justify-content: center;
+    text-align: center;
     display: flex;
     flex-direction: row;
+    margin: 2px;
 }
 
  .circle {
@@ -29,8 +34,22 @@ h1{
       -moz-border-radius: 25px;
       border-radius: 25px;
       background: gray;
-      margin = 20px;
+      margin-left: 10px;
     }
+
+.circle:hover{
+    background: blue;
+}
+
+.piece-link{
+    width: 25px;
+    height: 25px;
+    -webkit-border-radius: 25px;
+    -moz-border-radius: 25px;
+    border-radius: 25px;
+}
+
+
 
 .piece-neutral {
     background: red;
@@ -46,18 +65,21 @@ h1{
 
 .piece-white{
     background: white;
-    border-style: double;
-    border-color: yellow;
 }
 
 .piece-highlight{
-    background: cyan;
+    border-color: red;
+    border-style: dashed;
 }
 
-.table{
-background: whitesmoke;
-display: flex;
-flex:2;
+.container {
+    width: 50%;
+    display: inline-flex;
+}
+
+.tables{
+    background: whitesmoke;
+    float: right;
 }
 
 table {

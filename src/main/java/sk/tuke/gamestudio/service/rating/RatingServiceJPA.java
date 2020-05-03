@@ -24,8 +24,8 @@ public class RatingServiceJPA implements RatingService {
         try {
             return ((Double) entityManager.createNamedQuery("Rating.getAverageRating")
                     .setParameter("game", game).getSingleResult()).intValue();
-        } catch (NoResultException e) {
-            throw new RatingException("Error getting average rating",e);
+        } catch (NoResultException | NullPointerException e) {
+            return 0;
         }
     }
 
@@ -36,8 +36,8 @@ public class RatingServiceJPA implements RatingService {
                     .setParameter("game", game)
                     .setParameter("player", player)
                     .getSingleResult();
-        }catch (NoResultException e){
-            throw new RatingException("Error getting rating",e);
+        }catch (NoResultException | NullPointerException e){
+            return 0;
         }
     }
 }

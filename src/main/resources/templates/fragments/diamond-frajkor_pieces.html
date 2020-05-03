@@ -7,7 +7,7 @@
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
     <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
     <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
-        <div class="circle piece-empty" th:if="${viewPiece.isEmpty()}">
+        <div class="circle piece-empty">
         </div>
     </a>
 </th:block>
@@ -16,7 +16,7 @@
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
     <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
     <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
-        <div class="circle piece-neutral" th:if="${viewPiece.isTaken()}"></div>
+        <div class="circle piece-neutral"></div>
     </a>
 </th:block>
 
@@ -24,7 +24,8 @@
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
     <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
     <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
-        <div class="circle piece-black" th:if="${viewPiece.isTaken()}"></div>
+        <div class="circle piece-black"></div>
+<!--        <div class="circle piece-black piece-highlight" th:unless="${webUI.isPlacementPhase()}"></div>-->
     </a>
 </th:block>
 
@@ -32,7 +33,7 @@
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
     <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
     <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
-        <div class="circle piece-white" th:if="${viewPiece.isTaken()}"></div>
+        <div class="circle piece-white"></div>
     </a>
 </th:block>
 

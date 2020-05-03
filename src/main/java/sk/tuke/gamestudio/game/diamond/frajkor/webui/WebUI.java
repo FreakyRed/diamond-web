@@ -1,11 +1,15 @@
 package sk.tuke.gamestudio.game.diamond.frajkor.webui;
 
+import sk.tuke.gamestudio.entity.Comment;
 import sk.tuke.gamestudio.entity.Score;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.Field;
+import sk.tuke.gamestudio.game.diamond.frajkor.core.GamePhase;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.GameState;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.Piece;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
+import sk.tuke.gamestudio.service.comment.CommentService;
+import sk.tuke.gamestudio.service.rating.RatingService;
 import sk.tuke.gamestudio.service.score.ScoreService;
 
 import java.util.Date;
@@ -17,9 +21,13 @@ public class WebUI {
     private int finalScore = 0;
 
     private ScoreService scoreService;
+    private RatingService ratingService;
+    private CommentService commentService;
 
-    public WebUI(ScoreService scoreService) {
+    public WebUI(ScoreService scoreService, RatingService ratingService, CommentService commentService) {
         this.scoreService = scoreService;
+        this.ratingService = ratingService;
+        this.commentService = commentService;
         createField();
     }
 
@@ -42,29 +50,23 @@ public class WebUI {
         int row = Integer.parseInt(rowString);
         int column = Integer.parseInt(columnString);
 
-//        switch (command) {
-//            case PLACE:
-//                try {
-//                    field.placePiece(row, column);
-//                } catch (WrongGamePhaseException e) {
-//                    return;
-//                }
-//                break;
-//            case MOVE:
-//                try {
-//                    field.movePiece(row, column, 0, 0);
-//                } catch (PiecesException | WrongGamePhaseException e) {
-//                    return;
-//                }
-//                break;
-//            case DRAW:
-//                break;
-//        }
-
-        try {
-            field.placePiece(row, column);
-        } catch (WrongGamePhaseException e) {
-            return;
+        switch (command) {
+            case PLACE:
+                try {
+                    field.placePiece(row, column);
+                } catch (WrongGamePhaseException e) {
+                    return;
+                }
+                break;
+            case MOVE:
+                try {
+                    field.movePiece(row, column, 0, 0);
+                } catch (PiecesException | WrongGamePhaseException e) {
+                    return;
+                }
+                break;
+            case DRAW:
+                break;
         }
 
         if (isGameEnded()) {
@@ -93,8 +95,20 @@ public class WebUI {
         return finalScore;
     }
 
+    public String getGameState(){
+        return field.getGameState().toString().toUpperCase();
+    }
+
     public ViewPiece getViewPiece(int row, int column) {
         return new ViewPiece(field.getPiece(row, column), row, column);
+    }
+
+    public String getGamePhase() {
+        return field.getGamePhase().toString().toUpperCase();
+    }
+
+    public boolean isPlacementPhase(){
+        return field.getGamePhase() == GamePhase.PLACEMENT;
     }
 
 }
