@@ -23,6 +23,7 @@
 <th:block th:fragment="blackPiece(viewPiece)">
     <!--/* the following comment is only a hint for IntelliJ IDEA for code completion and analysis */-->
     <!--/* @thymesVar id="viewPiece" type="sk.tuke.gamestudio.game.diamond.frajkor.webui.ViewPiece" */-->
+    <a
     <a th:href="@{/diamond-frajkor(row=${viewPiece.row}, column=${viewPiece.column})}" class="piece-link">
         <div class="circle piece-black"></div>
 <!--        <div class="circle piece-black piece-highlight" th:unless="${webUI.isPlacementPhase()}"></div>-->

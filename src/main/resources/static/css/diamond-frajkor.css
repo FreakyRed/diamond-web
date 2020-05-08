@@ -1,5 +1,5 @@
 body{
-    background-image: linear-gradient(to bottom right, #4facfe, #00f2fe);
+    background-image: linear-gradient(to bottom right, darkslateblue, #00f2fe);
 }
 
 h1{
@@ -10,21 +10,25 @@ h1{
     font-weight: bolder;
 }
 
+main {
+    width: 100%;
+    display: flex;
+    }
+
 .field{
     justify-content: center;
     text-align : center;
     flex-direction: column;
     width: 50%;
-    background: whitesmoke;
-    float: left;
 }
 
-.field__row {
+.field-row {
     justify-content: center;
     text-align: center;
     display: flex;
     flex-direction: row;
     margin: 2px;
+    border: none;
 }
 
  .circle {
@@ -35,6 +39,7 @@ h1{
       border-radius: 25px;
       background: gray;
       margin-left: 10px;
+      margin-right: 25px;
     }
 
 .circle:hover{
@@ -42,14 +47,10 @@ h1{
 }
 
 .piece-link{
-    width: 25px;
-    height: 25px;
     -webkit-border-radius: 25px;
     -moz-border-radius: 25px;
     border-radius: 25px;
 }
-
-
 
 .piece-neutral {
     background: red;
@@ -72,26 +73,40 @@ h1{
     border-style: dashed;
 }
 
-.container {
-    width: 50%;
-    display: inline-flex;
-}
 
 .tables{
-    background: whitesmoke;
-    float: right;
+    width: 50%;
+    text-align: center;
+    background-color: whitesmoke;
 }
+
 
 table {
     border-collapse: collapse;
     border: none;
+    display: inline;
 }
 
 tr {
     border-bottom: 1px solid gray;
 }
 
+.tables h2{
+    font-family: "Agency FB",Helvetica,sans-serif;
+    color: whitesmoke;
+    background-color: blue;
+}
+
 th, td {
     text-align: left;
     padding: 5px;
+
+}
+
+footer{
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    font-size: 1rem;
+    padding: 20px;
 }

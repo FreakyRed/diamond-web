@@ -14,45 +14,11 @@
 <body>
 <h1>Diamond</h1>
 
-<!--    <div class="gamePhase" th:text="gamePhase=${webUI.getField().getGamePhase()}"></div>-->
-    <div class="field" th:with="field=${webUI.getField()}">
-        <span class="field__row" th:each="rowIdx: ${#numbers.sequence(0, field.getRowCount() - 1)}">
-            <th:block th:each="colIdx: ${#numbers.sequence(0, field.getColumnCount(rowIdx) - 1)}">
-                <th:block th:with="viewPiece=${webUI.getViewPiece(rowIdx, colIdx)}">
-                    <div th:data-state="${viewPiece.type}" th:class="'field__piece piece--type-' + ${viewPiece.type}"
-                         th:switch="${viewPiece.getType()}">
-                        <th:block th:case="empty">
-                            <div th:replace="fragments/diamond-frajkor_pieces :: emptyPiece(*{viewPiece})"></div>
-                        </th:block>
-                        <th:block th:case="neutral">
-                            <div th:replace="fragments/diamond-frajkor_pieces :: neutralPiece(*{viewPiece})"></div>
-                        </th:block>
-                        <th:block th:case="white">
-                            <div th:replace="fragments/diamond-frajkor_pieces :: whitePiece(*{viewPiece})"></div>
-                        </th:block>
-                        <th:block th:case="black">
-                            <div th:replace="fragments/diamond-frajkor_pieces :: blackPiece(*{viewPiece})"></div>
-                        </th:block>
-                    </div>
-                </th:block>
-            </th:block>
-        </span>
-</div>
+<main>
+    <div class="field" th:utext="${@diamondFrajkorController.htmlField}"></div>
 
-
-<!--    <div th:if="${webUI.isGameLost()}" class="game-status game-status&#45;&#45;lost">Game Over</div>-->
-<div th:text="'Current game state: ' + ${webUI.getGameState()}"></div>
-<div th:text="'Current game phase: ' + ${webUI.getGamePhase()}"></div>
-<div th:if="${webUI.isGameWon()}" class="game-status game-status--won"
-     th:text="'You won! Your score is ' + ${webUI.getFinalScore()}"></div>
-
-
-<a href="?command=new">
-    <button>New Game</button>
-</a>
-
-<div class="container">
     <div class="tables">
+        <div class = "scores">
         <h2>Hall of fame</h2>
 
         <!-- Hall of Fame - Server side generation - Thymeleaf -->
@@ -74,20 +40,17 @@
             </tr>
             </tbody>
         </table>
+        </div>
 
+        <div class = "ratings">
         <h2>Player Ratings</h2>
-        <table>
-            <thead>
-            <tr>
-                <th>Average Rating</th>
-            </tr>
-            </thead>
-            <tbody
-                <td th:text="${averageRating}"></td>
-            </tr>
-            </tbody>
-        </table>
+            <p>Average rating for this game is:</p>
+                <p th:text="${averageRating}"></p>
+            <p>Your current rating for this game is:</p>
+            <p th:text="${playerRating}"></p>
+        </div>
 
+        <div class="comments">
         <h2>Comments</h2>
         <table>
             <thead>
@@ -110,8 +73,26 @@
     </div>
 </div>
 
+</main>
+
+
+
+<div th:text="${@diamondFrajkorController.gamePhase} "></div>
+<div th:text="${@diamondFrajkorController.gameState}"></div>
+<div>
+<a href="/diamond-frajkor/new">
+    <button>New Game</button>
+</a>
+</div>
+
+<footer>
+    Martin Frajkor, Komponentové programovanie 2020, TUKE
+</footer>
+
 <script>
+
     function handleTileRightClick(piece) {
+        console.log(gameField);
         var link = piece.querySelector(".piece-link").href;
         var command = piece.attributes['data-state'].value === 'empty' ? "highlight" : "";
         window.location.href = link + '&command=' + command;
@@ -125,10 +106,6 @@
             });
         });
     });
-</script>
-
-<script>
-
 </script>
 </body>
 </html>
