@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Diamond</title>
 </head>
 <body>
     <h1>Welcome to Diamond!</h1>
-    <p><a href="/diamond-frajkor">You can play it here.</a></p>
+
+    <div th:if="${@userFrajkorController.logged}">
+        You are logged in as <span th:text = "${@userFrajkorController.loggedUser}"></span>
+        <a href="/user/logout">Logout</a>
+    </div>
+
+    <div th:if="${not @userFrajkorController.logged}">
+        <form method="get" action="/user/login">
+            Login: <input name="login" type="text">
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
+    <div><a href="/diamond-frajkor">You can play it here.</a></div>
 </body>
 </html>

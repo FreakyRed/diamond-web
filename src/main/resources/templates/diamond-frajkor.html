@@ -25,7 +25,6 @@
         <table>
             <thead>
             <tr>
-                <th>Game</th>
                 <th>Player</th>
                 <th>Points</th>
                 <th>Played on</th>
@@ -33,7 +32,6 @@
             </thead>
             <tbody>
             <tr th:each="score: ${scores}">
-                <td th:text="${score.game}"></td>
                 <td th:text="${score.player}"></td>
                 <td th:text="${score.points}"></td>
                 <td th:text="${score.playedOn}"></td>
@@ -55,7 +53,6 @@
         <table>
             <thead>
             <tr>
-                <th>Game</th>
                 <th>Player</th>
                 <th>Comment</th>
                 <th>Commented on</th>
@@ -63,7 +60,6 @@
             </thead>
             <tbody>
             <tr th:each="comment: ${comments}">
-                <td th:text="${comment.game}"></td>
                 <td th:text="${comment.player}"></td>
                 <td th:text="${comment.comment}"></td>
                 <td th:text="${comment.commentedOn}"></td>
@@ -77,7 +73,7 @@
 
 
 
-<div th:text="${@diamondFrajkorController.gamePhase} "></div>
+<div th:text="${@diamondFrajkorController.gamePhase}"></div>
 <div th:text="${@diamondFrajkorController.gameState}"></div>
 <div>
 <a href="/diamond-frajkor/new">
@@ -89,8 +85,8 @@
     Martin Frajkor, Komponentové programovanie 2020, TUKE
 </footer>
 
-<script>
 
+<script>
     function handleTileRightClick(piece) {
         console.log(gameField);
         var link = piece.querySelector(".piece-link").href;

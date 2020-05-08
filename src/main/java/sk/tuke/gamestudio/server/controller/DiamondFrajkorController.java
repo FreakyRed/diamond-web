@@ -6,17 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.context.annotation.Scope;
-import sk.tuke.gamestudio.game.diamond.frajkor.core.Field;
-import sk.tuke.gamestudio.game.diamond.frajkor.core.GamePhase;
-import sk.tuke.gamestudio.game.diamond.frajkor.core.GameState;
-import sk.tuke.gamestudio.game.diamond.frajkor.core.Piece;
+import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
+import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.EasyBot;
 import sk.tuke.gamestudio.service.comment.CommentService;
 import sk.tuke.gamestudio.service.rating.RatingService;
 import sk.tuke.gamestudio.service.score.ScoreService;
-
-import java.util.List;
 
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
@@ -34,19 +30,23 @@ public class DiamondFrajkorController {
 
     private static final String GAME_NAME = "diamond-frajkor";
     private Field field;
+    private EasyBot easyBot;
 
     @RequestMapping
     public String diamond(String row, String column, Model model) {
         if(this.field == null) {
             createNewGame();
+            easyBot = new EasyBot(field);
         }
 
         try{
                 if(field.getGamePhase() == GamePhase.PLACEMENT){
                     field.placePiece(Integer.parseInt(row),Integer.parseInt(column));
+                    if(field.getCurrentPlayer() == Player.WHITE) easyBot.placePiece();
                 }
                 else{
                     field.movePiece(Integer.parseInt(row),Integer.parseInt(column),0,0);
+                    if(field.getCurrentPlayer() == Player.WHITE) easyBot.movePiece();
                 }
             }catch (NumberFormatException | PiecesException | WrongGamePhaseException | NullPointerException e){
                 e.printStackTrace();
@@ -98,6 +98,7 @@ public class DiamondFrajkorController {
 
     private void createNewGame() {
         this.field = new Field();
+        this.easyBot = new EasyBot(field);
     }
 
     private String getClassName(Piece piece) {
@@ -121,6 +122,5 @@ public class DiamondFrajkorController {
         model.addAttribute("comments", commentService.getComments(GAME_NAME));
         model.addAttribute("gameField",field.getField());
     }
-
 
 }
