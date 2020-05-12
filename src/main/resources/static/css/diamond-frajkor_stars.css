@@ -1,10 +1,16 @@
-.stars input{
-    position: absolute;
-    left: -999999px;
+.rating-stars .average-stars{
+    display: inline-block;
+    justify-content: center;
 }
 
-.stars a{
-    display: inline-block;
-    text-decoration: none;
-    margin: 0;
+.rating-stars span, .average-stars span{
+    margin-left: 20px;
+}
+
+.checked{
+    color: cornflowerblue;
+}
+
+.unchecked{
+    color: dimgray;
 }

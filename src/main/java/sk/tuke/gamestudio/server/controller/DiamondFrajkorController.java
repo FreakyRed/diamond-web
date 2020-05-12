@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.context.annotation.Scope;
+import sk.tuke.gamestudio.entity.Comment;
+import sk.tuke.gamestudio.entity.Rating;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
@@ -15,6 +17,8 @@ import sk.tuke.gamestudio.service.comment.CommentService;
 import sk.tuke.gamestudio.service.rating.RatingService;
 import sk.tuke.gamestudio.service.score.ScoreService;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
 import java.util.NoSuchElementException;
 
 @Controller
@@ -63,6 +67,20 @@ public class DiamondFrajkorController {
             e.printStackTrace();
         }
 
+        prepareModel(model);
+        return "diamond-frajkor";
+    }
+
+    @RequestMapping("/rating")
+    public String addRating(String rating, Model model){
+        ratingService.setRating(new Rating(System.getProperty("user.name"),GAME_NAME,Integer.parseInt(rating),new Date()));
+        prepareModel(model);
+        return "diamond-frajkor";
+    }
+
+    @RequestMapping("/comment")
+    public String addComment(String comment, Model model){
+        commentService.addComment(new Comment(System.getProperty("user.name"),GAME_NAME,comment,new Date()));
         prepareModel(model);
         return "diamond-frajkor";
     }
@@ -128,7 +146,7 @@ public class DiamondFrajkorController {
         model.addAttribute("scores", scoreService.getBestScores(GAME_NAME));
         model.addAttribute("averageRating", ratingService.getAverageRating(GAME_NAME));
         model.addAttribute("playerRating", ratingService.getRating(GAME_NAME, System.getProperty("user.name")));
-        model.addAttribute("comments", commentService.getComments(GAME_NAME));
+        model.addAttribute("comments", commentService.getComments(GAME_NAME).subList(0,5));
         model.addAttribute("gameField", field.getField());
     }
 
