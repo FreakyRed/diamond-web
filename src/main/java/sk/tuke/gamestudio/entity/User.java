@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
+@Table(name="users")
 @NamedQuery(name = "getLogin",
 query = "SELECT u FROM User u WHERE u.username=:username AND u.password=:password")
 public class User implements Serializable {

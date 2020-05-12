@@ -8,6 +8,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.context.annotation.Scope;
 import sk.tuke.gamestudio.entity.Comment;
 import sk.tuke.gamestudio.entity.Rating;
+import sk.tuke.gamestudio.entity.Score;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
@@ -46,41 +47,26 @@ public class DiamondFrajkorController {
             bot = new EasyBot(field);
         }
 
-        try {
-            int rowFrom = Integer.parseInt(row), colFrom = Integer.parseInt(column);
-
-            if (field.getGamePhase() == GamePhase.PLACEMENT) {
-                field.placePiece(rowFrom, colFrom);
-                if (field.getCurrentPlayer() == Player.WHITE) bot.placePiece();
-            } else {
-                if (field.getPiece(rowFrom, colFrom).getPieceType() == PieceType.NEUTRAL) {
-                    field.removeRedPiece(rowFrom, colFrom);
-                } else {
-                    Piece piece = field.getPiece(rowFrom,colFrom);
-                    Piece connectedPiece = findFirstEmptyConnectedPiece(piece);
-                    field.movePiece(rowFrom, colFrom,
-                            findPieceInField(connectedPiece,true), findPieceInField(connectedPiece,false));
-                }
-                if (field.getCurrentPlayer() == Player.WHITE) bot.movePiece();
-            }
-        } catch (NumberFormatException | PiecesException | WrongGamePhaseException | NullPointerException | NoSuchElementException e) {
-            e.printStackTrace();
+        if (getGameState() == GameState.SOLVED) {
+            prepareModel(model);
+            return "diamond-frajkor";
         }
 
+        gameLoop(row, column);
         prepareModel(model);
         return "diamond-frajkor";
     }
 
     @RequestMapping("/rating")
-    public String addRating(String rating, Model model){
-        ratingService.setRating(new Rating(System.getProperty("user.name"),GAME_NAME,Integer.parseInt(rating),new Date()));
+    public String addRating(String rating, Model model) {
+        ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, Integer.parseInt(rating), new Date()));
         prepareModel(model);
         return "diamond-frajkor";
     }
 
     @RequestMapping("/comment")
-    public String addComment(String comment, Model model){
-        commentService.addComment(new Comment(System.getProperty("user.name"),GAME_NAME,comment,new Date()));
+    public String addComment(String comment, Model model) {
+        commentService.addComment(new Comment(System.getProperty("user.name"), GAME_NAME, comment, new Date()));
         prepareModel(model);
         return "diamond-frajkor";
     }
@@ -98,6 +84,22 @@ public class DiamondFrajkorController {
 
     public GamePhase getGamePhase() {
         return field.getGamePhase();
+    }
+
+    public Player getCurrentPlayer() {
+        return field.getCurrentPlayer();
+    }
+
+    public boolean isGameDrawn() {
+        return field.areDrawConditionsMet();
+    }
+
+    public boolean isGameWon() {
+        return getGameState() == GameState.SOLVED && getCurrentPlayer() == Player.BLACK && !isGameDrawn();
+    }
+
+    public boolean isGameLost(){
+        return getGameState() == GameState.SOLVED && getCurrentPlayer() == Player.WHITE;
     }
 
     public String getHtmlField() {
@@ -146,7 +148,7 @@ public class DiamondFrajkorController {
         model.addAttribute("scores", scoreService.getBestScores(GAME_NAME));
         model.addAttribute("averageRating", ratingService.getAverageRating(GAME_NAME));
         model.addAttribute("playerRating", ratingService.getRating(GAME_NAME, System.getProperty("user.name")));
-        model.addAttribute("comments", commentService.getComments(GAME_NAME).subList(0,5));
+        model.addAttribute("comments", commentService.getComments(GAME_NAME).subList(0, 5));
         model.addAttribute("gameField", field.getField());
     }
 
@@ -166,6 +168,49 @@ public class DiamondFrajkorController {
             }
         }
         return (isRow) ? row : col;
+    }
+
+    private void gameLoop(String row, String column) {
+        if (row == null || column == null) {
+            return;
+        }
+
+        try {
+            int rowFrom = Integer.parseInt(row), colFrom = Integer.parseInt(column);
+
+            if (field.getGamePhase() == GamePhase.PLACEMENT) {
+                field.placePiece(rowFrom, colFrom);
+            } else {
+                if (field.getPiece(rowFrom, colFrom).getPieceType() == PieceType.NEUTRAL) {
+                    field.removeRedPiece(rowFrom, colFrom);
+                } else {
+                    Piece piece = field.getPiece(rowFrom, colFrom);
+                    Piece connectedPiece = findFirstEmptyConnectedPiece(piece);
+                    field.movePiece(rowFrom, colFrom,
+                            findPieceInField(connectedPiece, true), findPieceInField(connectedPiece, false));
+                }
+            }
+
+                if (this.isGameWon()) {
+                    scoreService.addScore(new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Date()));
+                    return;
+                }
+
+                if (field.getCurrentPlayer() == Player.WHITE){
+                    if ((getGamePhase() == GamePhase.PLACEMENT)) {
+                        bot.placePiece();
+                    } else {
+                        bot.movePiece();
+                    }
+                }
+
+                if(this.isGameLost()){
+                    return;
+                }
+
+        } catch (NumberFormatException | PiecesException | WrongGamePhaseException | NoSuchElementException e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -16,11 +16,20 @@
 <h1>Diamond</h1>
 
 <div class="gameInfo">
-    <p th:text="${@diamondFrajkorController.gamePhase}"></p>
-    <p th:text="${@diamondFrajkorController.gameState}"></p>
+    <p th:text="|Current game phase: ${@diamondFrajkorController.gamePhase}"></p>
     <a href="/diamond-frajkor/new">
         <button>New Game</button>
     </a>
+</div>
+
+<div class="winInfo" th:if="${@diamondFrajkorController.gameWon}">
+    <p>Congratulations! You have won. Your score has been added to the database.</p>
+</div>
+<div class="loseInfo" th:if="${@diamondFrajkorController.gameLost}">
+    <p>Too bad! You have lost. Please try again.</p>
+</div>
+<div class="drawInfo" th:if="${@diamondFrajkorController.gameDrawn}">
+    <p>The game has been drawn. Please try again.</p>
 </div>
 
 <main>

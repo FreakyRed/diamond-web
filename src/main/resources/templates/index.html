@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Gamestudio</title>
+</head>
+
+<body>
+<h1>Welcome to Gamestudio!</h1>
+
+
+<th:block>
+<div th:if="${@userFrajkorController.logged}">
+    <div th:text="|You are logges in as ${@userFrajkorController.loggedUser.username}|"></div>
+</div>
+
+<div th:unless="${@userFrajkorController.logged}">
+    <form method="post" action="/user/login">
+        <label>
+            Username:
+            <input type="text" placeholder="Your username"/>
+        </label>
+        <label>
+            Password:
+            <input type="password" placeholder="Your password">
+        </label>
+    </form>
+    <input type="submit" value="Login">
+</div>
+</th:block>
+
+
+<h2>Register to GameStudio</h2>
+<form method="post" action="/register">
+    <label>
+        Username:
+        <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
+    </label>
+    <label>
+        Password:
+        <input type="password" placeholder="Your password" th:value="${password}" name="password">
+    </label>
+
+    <input type="submit" value="Register">
+</form>
+
+
+<div th:text="${@userFrajkorController.notification}"></div>
+
+
+<div><a href="/diamond-frajkor">Diamond</a></div>
+
+</body>
+</html>
