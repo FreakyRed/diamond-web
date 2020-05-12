@@ -1,13 +1,16 @@
+@import "diamond-frajkor_stars.css";
+
 body{
     background-image: linear-gradient(to bottom right, darkslateblue, #00f2fe);
 }
 
 h1{
-    font-size: 40px;
+    font-size: 35px;
     font-family: "Agency FB",Helvetica,"Times New Roman",sans-serif;
-    color: darkslateblue;
+    color: whitesmoke;
     text-align: center;
     font-weight: bolder;
+
 }
 
 main {
@@ -20,6 +23,7 @@ main {
     text-align : center;
     flex-direction: column;
     width: 50%;
+
 }
 
 .field-row {
@@ -27,19 +31,21 @@ main {
     text-align: center;
     display: flex;
     flex-direction: row;
-    margin: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
     border: none;
 }
 
  .circle {
-      width: 25px;
-      height: 25px;
-      -webkit-border-radius: 25px;
-      -moz-border-radius: 25px;
-      border-radius: 25px;
+      width: 20px;
+      height: 20px;
+      -webkit-border-radius: 20px;
+      -moz-border-radius: 20px;
+      border-radius: 20px;
       background: gray;
       margin-left: 10px;
-      margin-right: 25px;
+      /*margin-left: 10px;*/
+      /*margin-right: 25px;*/
     }
 
 .circle:hover{

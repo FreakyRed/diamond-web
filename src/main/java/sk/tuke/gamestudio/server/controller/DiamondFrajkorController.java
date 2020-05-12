@@ -9,10 +9,13 @@ import org.springframework.context.annotation.Scope;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
+import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.Bot;
 import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.EasyBot;
 import sk.tuke.gamestudio.service.comment.CommentService;
 import sk.tuke.gamestudio.service.rating.RatingService;
 import sk.tuke.gamestudio.service.score.ScoreService;
+
+import java.util.NoSuchElementException;
 
 @Controller
 @Scope(WebApplicationContext.SCOPE_SESSION)
@@ -30,27 +33,35 @@ public class DiamondFrajkorController {
 
     private static final String GAME_NAME = "diamond-frajkor";
     private Field field;
-    private EasyBot easyBot;
+    private Bot bot;
 
     @RequestMapping
     public String diamond(String row, String column, Model model) {
-        if(this.field == null) {
+        if (this.field == null) {
             createNewGame();
-            easyBot = new EasyBot(field);
+            bot = new EasyBot(field);
         }
 
-        try{
-                if(field.getGamePhase() == GamePhase.PLACEMENT){
-                    field.placePiece(Integer.parseInt(row),Integer.parseInt(column));
-                    if(field.getCurrentPlayer() == Player.WHITE) easyBot.placePiece();
+        try {
+            int rowFrom = Integer.parseInt(row), colFrom = Integer.parseInt(column);
+
+            if (field.getGamePhase() == GamePhase.PLACEMENT) {
+                field.placePiece(rowFrom, colFrom);
+                if (field.getCurrentPlayer() == Player.WHITE) bot.placePiece();
+            } else {
+                if (field.getPiece(rowFrom, colFrom).getPieceType() == PieceType.NEUTRAL) {
+                    field.removeRedPiece(rowFrom, colFrom);
+                } else {
+                    Piece piece = field.getPiece(rowFrom,colFrom);
+                    Piece connectedPiece = findFirstEmptyConnectedPiece(piece);
+                    field.movePiece(rowFrom, colFrom,
+                            findPieceInField(connectedPiece,true), findPieceInField(connectedPiece,false));
                 }
-                else{
-                    field.movePiece(Integer.parseInt(row),Integer.parseInt(column),0,0);
-                    if(field.getCurrentPlayer() == Player.WHITE) easyBot.movePiece();
-                }
-            }catch (NumberFormatException | PiecesException | WrongGamePhaseException | NullPointerException e){
-                e.printStackTrace();
+                if (field.getCurrentPlayer() == Player.WHITE) bot.movePiece();
             }
+        } catch (NumberFormatException | PiecesException | WrongGamePhaseException | NullPointerException | NoSuchElementException e) {
+            e.printStackTrace();
+        }
 
         prepareModel(model);
         return "diamond-frajkor";
@@ -67,7 +78,7 @@ public class DiamondFrajkorController {
         return field.getGameState();
     }
 
-    public GamePhase getGamePhase(){
+    public GamePhase getGamePhase() {
         return field.getGamePhase();
     }
 
@@ -79,13 +90,11 @@ public class DiamondFrajkorController {
             for (int column = 0; column < field.getColumnCount(row); column++) {
                 Piece piece = field.getPiece(row, column);
                 sb.append("<td>\n");
-                if(getGamePhase() == GamePhase.PLACEMENT) {
-                    sb.append("<a href='" +
-                            String.format("/diamond-frajkor?row=%s&column=%s", row, column)
-                            + "' class='piece-link'>");
-                    sb.append("<div class='circle piece-" + getClassName(piece) + "'></div>");
-                    sb.append("</a>\n");
-                }
+                sb.append("<a href='" +
+                        String.format("/diamond-frajkor?row=%s&column=%s", row, column)
+                        + "' class='piece-link'>");
+                sb.append("<div class='circle piece-" + getClassName(piece) + "'></div>");
+                sb.append("</a>\n");
                 sb.append("</td>\n");
             }
             sb.append("</tr>\n");
@@ -98,7 +107,7 @@ public class DiamondFrajkorController {
 
     private void createNewGame() {
         this.field = new Field();
-        this.easyBot = new EasyBot(field);
+        this.bot = new EasyBot(field);
     }
 
     private String getClassName(Piece piece) {
@@ -120,7 +129,26 @@ public class DiamondFrajkorController {
         model.addAttribute("averageRating", ratingService.getAverageRating(GAME_NAME));
         model.addAttribute("playerRating", ratingService.getRating(GAME_NAME, System.getProperty("user.name")));
         model.addAttribute("comments", commentService.getComments(GAME_NAME));
-        model.addAttribute("gameField",field.getField());
+        model.addAttribute("gameField", field.getField());
     }
+
+    private Piece findFirstEmptyConnectedPiece(Piece piece) {
+        return piece.getConnectedPieces().stream().filter(p -> p.getPieceType() == PieceType.EMPTY).findFirst().get();
+    }
+
+    private int findPieceInField(Piece piece, boolean isRow) {
+        int row = 0, col = 0;
+        for (int i = 0; i < field.getField().length; i++) {
+            for (int j = 0; j < field.getField()[i].length; j++) {
+                if (field.getField()[i][j].equals(piece)) {
+                    row = i;
+                    col = j;
+                    break;
+                }
+            }
+        }
+        return (isRow) ? row : col;
+    }
+
 
 }

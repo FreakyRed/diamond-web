@@ -1,0 +1,10 @@
+.stars input{
+    position: absolute;
+    left: -999999px;
+}
+
+.stars a{
+    display: inline-block;
+    text-decoration: none;
+    margin: 0;
+}

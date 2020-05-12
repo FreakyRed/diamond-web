@@ -8,11 +8,20 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css"
           href="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"></link>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://cdn.datatables.net/1.10.11/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
 <h1>Diamond</h1>
+
+<div class="gameInfo">
+    <p th:text="${@diamondFrajkorController.gamePhase}"></p>
+    <p th:text="${@diamondFrajkorController.gameState}"></p>
+    <a href="/diamond-frajkor/new">
+        <button>New Game</button>
+    </a>
+</div>
 
 <main>
     <div class="field" th:utext="${@diamondFrajkorController.htmlField}"></div>
@@ -45,6 +54,8 @@
             <p>Average rating for this game is:</p>
                 <p th:text="${averageRating}"></p>
             <p>Your current rating for this game is:</p>
+
+            </p>
             <p th:text="${playerRating}"></p>
         </div>
 
@@ -72,36 +83,22 @@
 </main>
 
 
-
-<div th:text="${@diamondFrajkorController.gamePhase}"></div>
-<div th:text="${@diamondFrajkorController.gameState}"></div>
-<div>
-<a href="/diamond-frajkor/new">
-    <button>New Game</button>
-</a>
-</div>
-
 <footer>
     Martin Frajkor, Komponentové programovanie 2020, TUKE
 </footer>
 
-
+<script src="../scripts/diamond-frajkor_stars.js"></script>
 <script>
-    function handleTileRightClick(piece) {
-        console.log(gameField);
-        var link = piece.querySelector(".piece-link").href;
-        var command = piece.attributes['data-state'].value === 'empty' ? "highlight" : "";
-        window.location.href = link + '&command=' + command;
-    }
+   document.addEventListener('DOMContentLoaded', function(){
+       let stars = document.querySelectorAll('.star');
+       stars.forEach(function (star) {
+           star.addEventListener('click',setRating);
+       });
 
-    document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll(".piece-link").forEach(function (element) {
-            element.addEventListener("contextmenu", function (event) {
-                event.preventDefault();
-                handleTileRightClick(element);
-            });
-        });
-    });
+       let rating = parseInt(document.querySelector('.stars').getAttribute('data-rating'));
+       let target = stars[rating - 1];
+       target.dispatchEvent(new MouseEvent('click'));
+   });
 </script>
 </body>
 </html>

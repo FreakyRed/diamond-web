@@ -1,6 +1,8 @@
 package sk.tuke.gamestudio.server;
 
 import sk.tuke.gamestudio.entity.Rating;
+import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.Bot;
+import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.EasyBot;
 import sk.tuke.gamestudio.server.webservice.ScoreRestService;
 import sk.tuke.gamestudio.service.comment.CommentService;
 import sk.tuke.gamestudio.service.comment.CommentServiceJPA;
