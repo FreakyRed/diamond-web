@@ -1,10 +1,12 @@
 package sk.tuke.gamestudio.entity;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@NamedQuery(name = "User.getLogin",
+@NamedQuery(name = "getLogin",
 query = "SELECT u FROM User u WHERE u.username=:username AND u.password=:password")
 public class User implements Serializable {
 
@@ -17,9 +19,9 @@ public class User implements Serializable {
 
     private String password;
 
-    private User(String username, String password){
+    public User(String username, String password){
         this.username = username;
-        this.password = password;
+        this.password = new BCryptPasswordEncoder(12).encode(password);
     }
 
     public int getId() {

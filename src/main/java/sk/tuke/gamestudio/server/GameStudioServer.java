@@ -18,6 +18,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import sk.tuke.gamestudio.service.score.ScoreServiceRestClient;
+import sk.tuke.gamestudio.service.user.UserService;
+import sk.tuke.gamestudio.service.user.UserServiceJPA;
 
 @SpringBootApplication
 @Configuration
@@ -42,4 +44,8 @@ public class GameStudioServer {
     public RatingService ratingService() {
         return new RatingServiceJPA();
     }
+
+    @Bean(name="userServiceServer")
+    public UserService userService() {return new UserServiceJPA();}
+
 }

@@ -2,23 +2,44 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <title>Diamond</title>
+    <title>Gamestudio</title>
 </head>
 <body>
-    <h1>Welcome to Diamond!</h1>
+    <h1>Welcome to Gamestudio!</h1>
 
-    <div th:if="${@userFrajkorController.logged}">
-        You are logged in as <span th:text = "${@userFrajkorController.loggedUser}"></span>
+    <th:block th:if="${@userFrajkorController.logged}">
+        You are logged in as <span th:text = "${@userFrajkorController.loggedUser.username}"></span>
         <a href="/user/logout">Logout</a>
-    </div>
+    </th:block>
 
     <div th:if="${not @userFrajkorController.logged}">
         <form method="get" action="/user/login">
-            Login: <input name="login" type="text">
-            <input type="submit" value="Login">
+            <label>
+                Username:
+                <input type="text" placeholder="Your username"/>
+            </label>
+            <label>
+                Password:
+                <input type="password" placeholder="Your password">
+            </label>
         </form>
+        <input type="submit" value="Login">
     </div>
 
-    <div><a href="/diamond-frajkor">You can play it here.</a></div>
+    <h2>Register to GameStudio</h2>
+    <form method="post" action="/register">
+        <label>
+            Username:
+            <input type="text" placeholder="Your username"/>
+        </label>
+        <label>
+            Password:
+            <input type="password" placeholder="Your password">
+        </label>
+
+        <input type="submit" value="Register">
+    </form>
+
+    <div><a href="/diamond-frajkor">Diamond</a></div>
 </body>
 </html>

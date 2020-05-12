@@ -1,7 +1,7 @@
 @import "diamond-frajkor_stars.css";
 
 body{
-    background-image: linear-gradient(to bottom right, darkslateblue, #00f2fe);
+    background-image: linear-gradient(to bottom right, darkslateblue, cyan);
 }
 
 h1{
@@ -84,6 +84,7 @@ main {
     width: 50%;
     text-align: center;
     background-color: whitesmoke;
+    opacity: 70%;
 }
 
 
@@ -100,7 +101,8 @@ tr {
 .tables h2{
     font-family: "Agency FB",Helvetica,sans-serif;
     color: whitesmoke;
-    background-color: blue;
+    background-color: cornflowerblue;
+    opacity: 100%;
 }
 
 th, td {
