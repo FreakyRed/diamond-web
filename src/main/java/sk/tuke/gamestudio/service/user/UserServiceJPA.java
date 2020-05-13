@@ -14,6 +14,7 @@ public class UserServiceJPA implements UserService{
     @PersistenceContext
     private EntityManager entityManager;
 
+    private User user;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Override
@@ -28,6 +29,7 @@ public class UserServiceJPA implements UserService{
             User loggedUser = (User) entityManager.createNamedQuery("User.getLogin")
                     .setParameter("username",username)
                     .getSingleResult();
+            user = loggedUser;
             return loggedUser;
         }catch (NoResultException e){
             throw new UserException("User does not exist in the database..");
@@ -44,6 +46,10 @@ public class UserServiceJPA implements UserService{
         }catch (NoResultException e){
             throw new UserException("Password does not match.");
         }
+    }
+
+    public User getUser(){
+        return user;
     }
 
 

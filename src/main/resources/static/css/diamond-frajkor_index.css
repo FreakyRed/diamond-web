@@ -1,0 +1,11 @@
+body{
+    background: linear-gradient(to bottom right, darkslateblue, skyblue) no-repeat fixed center;
+}
+
+h1{
+    font-size: 35px;
+    font-family: "Agency FB",Helvetica,"Times New Roman",sans-serif;
+    color: whitesmoke;
+    text-align: center;
+    font-weight: bolder;
+}

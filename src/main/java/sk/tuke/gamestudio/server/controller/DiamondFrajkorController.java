@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Scope;
 import sk.tuke.gamestudio.entity.Comment;
 import sk.tuke.gamestudio.entity.Rating;
 import sk.tuke.gamestudio.entity.Score;
+import sk.tuke.gamestudio.entity.User;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.*;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.gamephase.WrongGamePhaseException;
 import sk.tuke.gamestudio.game.diamond.frajkor.core.exceptions.pieces.PiecesException;
@@ -40,6 +41,7 @@ public class DiamondFrajkorController {
     @Autowired
     private UserService userService;
 
+
     private static final String GAME_NAME = "diamond-frajkor";
     private Field field;
     private Bot bot;
@@ -63,14 +65,14 @@ public class DiamondFrajkorController {
 
     @RequestMapping("/rating")
     public String addRating(String rating, Model model) {
-        ratingService.setRating(new Rating(System.getProperty("user.name"), GAME_NAME, Integer.parseInt(rating), new Date()));
+        ratingService.setRating(new Rating(userService.getUser().getUsername(), GAME_NAME, Integer.parseInt(rating), new Date()));
         prepareModel(model);
         return "diamond-frajkor";
     }
 
     @RequestMapping("/comment")
     public String addComment(String comment, Model model) {
-        commentService.addComment(new Comment(System.getProperty("user.name"), GAME_NAME, comment, new Date()));
+        commentService.addComment(new Comment(userService.getUser().getUsername(), GAME_NAME, comment, new Date()));
         prepareModel(model);
         return "diamond-frajkor";
     }
@@ -102,7 +104,7 @@ public class DiamondFrajkorController {
         return getGameState() == GameState.SOLVED && getCurrentPlayer() == Player.BLACK && !isGameDrawn();
     }
 
-    public boolean isGameLost(){
+    public boolean isGameLost() {
         return getGameState() == GameState.SOLVED && getCurrentPlayer() == Player.WHITE;
     }
 
@@ -151,7 +153,9 @@ public class DiamondFrajkorController {
     private void prepareModel(Model model) {
         model.addAttribute("scores", scoreService.getBestScores(GAME_NAME));
         model.addAttribute("averageRating", ratingService.getAverageRating(GAME_NAME));
-        model.addAttribute("playerRating", ratingService.getRating(GAME_NAME, System.getProperty("user.name")));
+        if (userService.getUser() != null) {
+            model.addAttribute("playerRating", ratingService.getRating(GAME_NAME, userService.getUser().getUsername()));
+        }
         model.addAttribute("comments", commentService.getComments(GAME_NAME).subList(0, 5));
         model.addAttribute("gameField", field.getField());
     }
@@ -195,27 +199,28 @@ public class DiamondFrajkorController {
                 }
             }
 
-                if (this.isGameWon()) {
-                    scoreService.addScore(new Score(GAME_NAME, System.getProperty("user.name"), field.getScore(), new Date()));
-                    return;
+            if (this.isGameWon()) {
+                if (userService.getUser() != null) {
+                    scoreService.addScore(new Score(GAME_NAME, userService.getUser().getUsername(), field.getScore(), new Date()));
                 }
+                return;
+            }
 
-                if (field.getCurrentPlayer() == Player.WHITE){
-                    if ((getGamePhase() == GamePhase.PLACEMENT)) {
-                        bot.placePiece();
-                    } else {
-                        bot.movePiece();
-                    }
+            if (field.getCurrentPlayer() == Player.WHITE) {
+                if ((getGamePhase() == GamePhase.PLACEMENT)) {
+                    bot.placePiece();
+                } else {
+                    bot.movePiece();
                 }
+            }
 
-                if(this.isGameLost()){
-                    return;
-                }
+            if (this.isGameLost()) {
+                return;
+            }
 
         } catch (NumberFormatException | PiecesException | WrongGamePhaseException | NoSuchElementException e) {
             e.printStackTrace();
         }
     }
-
 
 }

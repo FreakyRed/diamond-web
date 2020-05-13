@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet" href="css/diamond-frajkor_index.css">
     <title>Gamestudio</title>
 </head>
 
@@ -10,41 +11,49 @@
 
 
 <th:block>
-<div th:if="${@userFrajkorController.logged}">
-    <div th:text="|You are logges in as ${@userFrajkorController.loggedUser.username}|"></div>
-    <a href="user/logout">Logout</a>
-</div>
+    <h2>Login to Gamestudio</h2>
+    <div th:if="${@userFrajkorController.logged}">
+        <div th:text="|You are logged in as ${@userFrajkorController.loggedUser.username}|"></div>
+        <a href="user/logout">Logout</a>
+    </div>
 
-<div th:unless="${@userFrajkorController.logged}">
-    <form method="post" action="user/login">
-        <label>
-            Username:
-            <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
-        </label>
-        <label>
-            Password:
-            <input type="password" placeholder="Your password" th:value="${password}" name="password">
-        </label>
-        <input type="submit" value="Login">
-    </form>
-</div>
+    <div th:unless="${@userFrajkorController.logged}">
+        <form method="post" action="user/login">
+            <div>
+                <label>
+                    Username:
+                    <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
+                </label>
+            </div>
+            <div>
+                <label>
+                    Password:
+                    <input type="password" placeholder="Your password" th:value="${password}" name="password">
+                </label>
+            </div>
+            <div><input type="submit" value="Login"></div>
+        </form>
+    </div>
 </th:block>
 
-
-<h2>Register to GameStudio</h2>
-<form method="post" action="user/register">
-    <label>
-        Username:
-        <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
-    </label>
-    <label>
-        Password:
-        <input type="password" placeholder="Your password" th:value="${password}" name="password" required>
-    </label>
-
-    <input type="submit" value="Register">
-</form>
-
+<div>
+    <h2>Register to GameStudio</h2>
+    <form method="post" action="user/register">
+        <div>
+            <label>
+                Username:
+                <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
+            </label>
+        </div>
+        <div>
+            <label>
+                Password:
+                <input type="password" placeholder="Your password" th:value="${password}" name="password" required>
+            </label>
+        </div>
+        <input type="submit" value="Register">
+    </form>
+</div>
 
 <div th:text="${@userFrajkorController.notification}"></div>
 
