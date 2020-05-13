@@ -7,8 +7,12 @@ import java.io.Serializable;
 
 @Entity
 @Table(name="users")
-@NamedQuery(name = "getLogin",
-query = "SELECT u FROM User u WHERE u.username=:username AND u.password=:password")
+@NamedQueries({
+        @NamedQuery(name = "User.getHash",
+                query = "SELECT u.password FROM User u WHERE u.username=:username"),
+        @NamedQuery(name = "User.getLogin",
+        query = "Select u FROM User u WHERE u.username=:username")
+})
 public class User implements Serializable {
 
     @Id
@@ -20,9 +24,17 @@ public class User implements Serializable {
 
     private String password;
 
+    public User(){
+
+    }
+
+    public User(String username){
+        this.username = username;
+    }
+
     public User(String username, String password){
         this.username = username;
-        this.password = new BCryptPasswordEncoder(12).encode(password);
+        this.password = password;
     }
 
     public int getId() {

@@ -17,6 +17,7 @@ import sk.tuke.gamestudio.game.diamond.frajkor.userinterface.EasyBot;
 import sk.tuke.gamestudio.service.comment.CommentService;
 import sk.tuke.gamestudio.service.rating.RatingService;
 import sk.tuke.gamestudio.service.score.ScoreService;
+import sk.tuke.gamestudio.service.user.UserService;
 
 import javax.xml.crypto.Data;
 import java.util.Date;
@@ -35,6 +36,9 @@ public class DiamondFrajkorController {
 
     @Autowired
     private RatingService ratingService;
+
+    @Autowired
+    private UserService userService;
 
     private static final String GAME_NAME = "diamond-frajkor";
     private Field field;

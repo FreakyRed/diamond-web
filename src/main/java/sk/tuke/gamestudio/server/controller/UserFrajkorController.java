@@ -32,32 +32,35 @@ public class UserFrajkorController {
     @RequestMapping("/login")
     public String login(String username, String password, Model model){
         try{
-            User userLogin = new User(username, new BCryptPasswordEncoder(12).encode(password));
-            loggedUser = userService.login(userLogin.getUsername(),userLogin.getPassword());
+            if(userService.isPasswordVerified(username,password)){
+                loggedUser = userService.login(username);
+            }
+            else{
+                notification = "Username is not registered or password is wrong.";
+            }
         }catch (UserException e){
             notification = e.getMessage();
+        }finally {
+            return index();
         }
-        return "redirect:/";
     }
 
     @RequestMapping("/logout")
     public String logout(Model model){
         loggedUser = null;
-        return "redirect:/";
+        return index();
     }
 
     @RequestMapping("/register")
     public String register(String username, String password, Model model){
         try{
-            User newUser = new User(username, new BCryptPasswordEncoder(12).encode(password));
-            userService.register(newUser.getUsername(),newUser.getPassword());
+            userService.register(username, password);
+            notification = "Sucessfully registered new user. Please log in";
         }catch (UserException e){
             notification = e.getMessage();
         }finally {
-            //return "redirect:/";
+            return index();
         }
-
-        return index();
     }
 
     public User getLoggedUser(){

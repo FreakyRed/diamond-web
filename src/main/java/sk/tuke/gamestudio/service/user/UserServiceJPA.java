@@ -14,24 +14,37 @@ public class UserServiceJPA implements UserService{
     @PersistenceContext
     private EntityManager entityManager;
 
+    private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
     @Override
-    public User register(String username, String password){
-        User user = new User(username,password);
+    public void register(String username, String password){
+        User user = new User(username, encoder.encode(password));
         entityManager.persist(user);
-        return user;
     }
 
     @Override
-    public User login(String username, String password){
+    public User login(String username){
         try{
-            User user = (User) entityManager.createNamedQuery("User.getLogin")
+            User loggedUser = (User) entityManager.createNamedQuery("User.getLogin")
                     .setParameter("username",username)
-                    .setParameter("password",new BCryptPasswordEncoder(12).encode(password))
                     .getSingleResult();
-            return user;
+            return loggedUser;
         }catch (NoResultException e){
             throw new UserException("User does not exist in the database..");
         }
     }
+
+    @Override
+    public boolean isPasswordVerified(String username, String password) {
+        try{
+            String hash = (String) entityManager.createNamedQuery("User.getHash")
+                    .setParameter("username",username)
+                    .getSingleResult();
+            return encoder.matches(password,hash);
+        }catch (NoResultException e){
+            throw new UserException("Password does not match.");
+        }
+    }
+
 
 }

@@ -12,33 +12,34 @@
 <th:block>
 <div th:if="${@userFrajkorController.logged}">
     <div th:text="|You are logges in as ${@userFrajkorController.loggedUser.username}|"></div>
+    <a href="user/logout">Logout</a>
 </div>
 
 <div th:unless="${@userFrajkorController.logged}">
-    <form method="post" action="/user/login">
+    <form method="post" action="user/login">
         <label>
             Username:
-            <input type="text" placeholder="Your username"/>
+            <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
         </label>
         <label>
             Password:
-            <input type="password" placeholder="Your password">
+            <input type="password" placeholder="Your password" th:value="${password}" name="password">
         </label>
+        <input type="submit" value="Login">
     </form>
-    <input type="submit" value="Login">
 </div>
 </th:block>
 
 
 <h2>Register to GameStudio</h2>
-<form method="post" action="/register">
+<form method="post" action="user/register">
     <label>
         Username:
-        <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
+        <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
     </label>
     <label>
         Password:
-        <input type="password" placeholder="Your password" th:value="${password}" name="password">
+        <input type="password" placeholder="Your password" th:value="${password}" name="password" required>
     </label>
 
     <input type="submit" value="Register">
