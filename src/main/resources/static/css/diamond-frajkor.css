@@ -2,7 +2,7 @@
 @import "diamond-frajkor_forms.css";
 
 body{
-    background-image: linear-gradient(to bottom right, darkslateblue, cyan);
+    background-image: linear-gradient(to bottom right, darkslateblue, skyblue);
 }
 
 h1{
@@ -19,12 +19,18 @@ main {
     display: flex;
     }
 
+.gameContainer{
+    justify-content: center;
+    text-align: center;
+    width: 50%;
+}
+
 .field{
     justify-content: center;
     text-align : center;
     flex-direction: column;
-    width: 50%;
-    margin-top: 100px;
+    margin-top: 50px;
+    margin-left: -14px;
 }
 
 .field-row {
@@ -45,8 +51,6 @@ main {
       border-radius: 27px;
       background: gray;
       margin-left: 27px;
-      /*margin-left: 10px;*/
-      /*margin-right: 25px;*/
     }
 
 .circle:hover{

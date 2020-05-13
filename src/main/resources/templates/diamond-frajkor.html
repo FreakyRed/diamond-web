@@ -15,15 +15,7 @@
 <body>
 <h1>Diamond</h1>
 
-<div class="gameInfo">
-    <p th:text="|Current game phase: ${@diamondFrajkorController.gamePhase}"></p>
-</div>
 
-<div class="restartButton">
-    <a href="/diamond-frajkor/new">
-        <button class="formButton">Restart</button>
-    </a>
-</div>
 
 <div class="winInfo" th:if="${@diamondFrajkorController.gameWon}">
     <p>Congratulations! You have won. Your score has been added to the database.</p>
@@ -36,7 +28,18 @@
 </div>
 
 <main>
+    <div class="gameContainer">
+        <div class="gameInfo">
+            <p th:text="|Current game phase: ${@diamondFrajkorController.gamePhase}"></p>
+        </div>
+
+        <div class="restartButton">
+            <a href="/diamond-frajkor/new">
+                <button class="formButton">Restart</button>
+            </a></div>
     <div class="field" th:utext="${@diamondFrajkorController.htmlField}"></div>
+    </div>
+
 
     <div class="tables">
         <div class="scores">
@@ -75,6 +78,7 @@
                 <span th:text="|${averageRating} out of 5|"></span>
             </div>
 
+            <th:block th:if="${@userFrajkorController.logged}">
             <p>Your current rating for this game is:</p>
             <div class="rating-stars">
                 <th:block th:with="playerRating = ${playerRating}"
@@ -87,6 +91,7 @@
                 <span th:text="|${playerRating} out of 5|"></span>
             </div>
 
+
             <p>Submit your rating:</p>
             <form method="get" action="/diamond-frajkor/rating" id="ratingForm">
                 <input type="radio" th:name="rating" th:value="1" value="1" required><label>1</label>
@@ -98,6 +103,7 @@
                     <input type="submit" value="Submit" class="formButton">
                 </div>
             </form>
+            </th:block>
 
             <div class="comments">
                 <h2>Latest comments</h2>
@@ -119,7 +125,7 @@
                 </table>
             </div>
 
-            <div>
+            <th:block th:if="${@userFrajkorController.logged}">
             <form method="get" action="/diamond-frajkor/comment" id="commentForm">
                 <div>
                 <label>Enter your comment:</label>
@@ -129,7 +135,7 @@
                     <input type="submit" value="Add comment" class="formButton">
                 </div>
             </form>
-            </div>
+            </th:block>
 </main>
 
 
