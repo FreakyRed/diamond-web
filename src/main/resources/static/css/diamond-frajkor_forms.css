@@ -1,0 +1,27 @@
+#commentForm, #ratingForm{
+    display: inline-block;
+    text-align: center;
+}
+
+#commentForm label, textarea{
+    display: block;
+}
+
+#commentForm label{
+    margin-top: 10px;
+}
+
+.formButton {
+    margin-top: 10px;
+    background-color: cornflowerblue;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+#commentForm textarea{
+    border-radius: 10px;
+    resize: none;
+}

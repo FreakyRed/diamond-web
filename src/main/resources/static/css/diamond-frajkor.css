@@ -1,4 +1,5 @@
 @import "diamond-frajkor_stars.css";
+@import "diamond-frajkor_forms.css";
 
 body{
     background-image: linear-gradient(to bottom right, darkslateblue, cyan);
@@ -23,7 +24,7 @@ main {
     text-align : center;
     flex-direction: column;
     width: 50%;
-
+    margin-top: 100px;
 }
 
 .field-row {
@@ -31,19 +32,19 @@ main {
     text-align: center;
     display: flex;
     flex-direction: row;
-    margin-top: 2px;
-    margin-bottom: 2px;
+    margin-top: 1px;
+    margin-bottom: 1px;
     border: none;
 }
 
  .circle {
-      width: 20px;
-      height: 20px;
-      -webkit-border-radius: 20px;
-      -moz-border-radius: 20px;
-      border-radius: 20px;
+      width: 27px;
+      height: 27px;
+      -webkit-border-radius: 27px;
+      -moz-border-radius: 27px;
+      border-radius: 27px;
       background: gray;
-      margin-left: 10px;
+      margin-left: 27px;
       /*margin-left: 10px;*/
       /*margin-right: 25px;*/
     }
@@ -53,9 +54,9 @@ main {
 }
 
 .piece-link{
-    -webkit-border-radius: 25px;
-    -moz-border-radius: 25px;
-    border-radius: 25px;
+    -webkit-border-radius: 27px;
+    -moz-border-radius: 27px;
+    border-radius: 27px;
 }
 
 .piece-neutral {
@@ -79,12 +80,12 @@ main {
     border-style: dashed;
 }
 
-
 .tables{
     width: 50%;
     text-align: center;
     background-color: whitesmoke;
     opacity: 85%;
+    border-radius: 25px;
 }
 
 
@@ -104,11 +105,22 @@ tr {
     background-color: cornflowerblue;
 }
 
-th, td {
-    text-align: left;
-    padding: 5px;
-
+.tables tr:nth-child(odd){
+    background-color: cornflowerblue;
 }
+
+th, td {
+    text-align: center;
+    padding: 5px;
+}
+
+th{
+    background: cornflowerblue;
+    color: black;
+    font-weight: bolder;
+    font-size: 18px;
+}
+
 
 footer{
     justify-content: center;
@@ -116,4 +128,34 @@ footer{
     display: flex;
     font-size: 1rem;
     padding: 20px;
+}
+
+.winInfo .drawInfo .loseInfo .gameInfo{
+    display: inline-block;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+}
+
+.winInfo p, .drawInfo p, .loseInfo p, .gameInfo p{
+    font-size: 150%;
+    font-family: "Agency FB", Helvetica, "Times New Roman", sans-serif;
+    color: antiquewhite;
+    text-align: center;
+}
+
+.gameInfo button{
+    text-align: center;
+    justify-content: center;
+}
+
+.restartButton{
+    text-align: center;
+    justify-content: center;
+}
+
+footer{
+    font-size: 120%;
+    font-family: "Agency FB",Helvetica,sans-serif;
+    color: whitesmoke;
 }
