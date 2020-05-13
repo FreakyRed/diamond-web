@@ -9,56 +9,58 @@
 <body>
 <h1>Welcome to Gamestudio!</h1>
 
+<div class="registrationForms">
+    <th:block>
+        <div class="loginForm" th:if="${@userFrajkorController.logged}">
+            <h2>Logged in</h2>
+            <div class="loggedIn" th:text="|You are logged in as ${@userFrajkorController.loggedUser.username}|"></div>
+            <a href="user/logout"><button id="formButtonLogin">Logout</button></a>
+        </div>
 
-<th:block>
-    <h2>Login to Gamestudio</h2>
-    <div th:if="${@userFrajkorController.logged}">
-        <div th:text="|You are logged in as ${@userFrajkorController.loggedUser.username}|"></div>
-        <a href="user/logout">Logout</a>
-    </div>
+        <div class="loginForm" th:unless="${@userFrajkorController.logged}">
+            <h2>Login to Gamestudio</h2>
+            <form method="post" action="user/login">
+                <div>
+                    <label>
+                        Username:
+                        <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        Password:
+                        <input type="password" placeholder="Your password" th:value="${password}" name="password" required/>
+                    </label>
+                </div>
+                <button type="submit" class="formButton">Login</button>
+            </form>
+        </div>
+    </th:block>
 
-    <div th:unless="${@userFrajkorController.logged}">
-        <form method="post" action="user/login">
+    <div class="registerForm">
+        <h2>Register to GameStudio</h2>
+        <form method="post" action="user/register">
             <div>
                 <label>
                     Username:
-                    <input type="text" placeholder="Your username" th:value="${username}" name="username"/>
+                    <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
                 </label>
             </div>
             <div>
                 <label>
                     Password:
-                    <input type="password" placeholder="Your password" th:value="${password}" name="password">
+                    <input type="password" placeholder="Your password" th:value="${password}" name="password" required>
                 </label>
             </div>
-            <div><input type="submit" value="Login"></div>
+            <button type="submit" class="formButton">Register</button>
         </form>
     </div>
-</th:block>
-
-<div>
-    <h2>Register to GameStudio</h2>
-    <form method="post" action="user/register">
-        <div>
-            <label>
-                Username:
-                <input type="text" placeholder="Your username" th:value="${username}" name="username" required/>
-            </label>
-        </div>
-        <div>
-            <label>
-                Password:
-                <input type="password" placeholder="Your password" th:value="${password}" name="password" required>
-            </label>
-        </div>
-        <input type="submit" value="Register">
-    </form>
 </div>
 
-<div th:text="${@userFrajkorController.notification}"></div>
+<div th:if="${@userFrajkorController.notification}" th:text="${@userFrajkorController.notification}" class="notification"></div>
 
-
-<div><a href="/diamond-frajkor">Diamond</a></div>
+<h2>Games</h2>
+<div class="gameLink"><a href="/diamond-frajkor">DIAMOND</a></div>
 
 </body>
 </html>

@@ -2,10 +2,99 @@ body{
     background: linear-gradient(to bottom right, darkslateblue, skyblue) no-repeat fixed center;
 }
 
-h1{
+h1, h2{
     font-size: 35px;
     font-family: "Agency FB",Helvetica,"Times New Roman",sans-serif;
     color: whitesmoke;
     text-align: center;
     font-weight: bolder;
+}
+
+h2{
+    font-size: 30px;
+}
+
+.registrationForms{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+
+
+.registerForm, .loginForm{
+    width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+
+.loginForm{
+    display: block;
+}
+
+
+.notification{
+    margin-top: 20px;
+    border-style: solid;
+    border-color: cornflowerblue;
+    border-radius: 5px;
+    color: black;
+    text-align: center;
+    display: block;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.gameLink{
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.gameLink a{
+    font-family: "Agency FB", Helvetica, "Times New Roman", sans-serif;
+    font-size: 25px;
+    text-decoration: none;
+    color: mediumblue;
+}
+
+.gameLink a:hover{
+    color: white;
+}
+
+label{
+    font-size: 15px;
+    color: whitesmoke;
+}
+
+input{
+    margin-top: 10px;
+    margin-left: 5px;
+}
+
+
+.formButton {
+    margin-top: 10px;
+    background-color: cornflowerblue;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    margin-left: 50px;
+}
+
+#formButtonLogin{
+    margin-top: 10px;
+    background-color: cornflowerblue;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.loggedIn{
+    font-size: 25px;
+    color: aliceblue;
+    font-family: "Agency FB", Helvetica, "Times New Roman", sans-serif;
 }

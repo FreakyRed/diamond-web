@@ -14,6 +14,15 @@
 
 <body>
 <h1>Diamond</h1>
+<th:block>
+    <div th:if="${@userFrajkorController.logged}">
+        <div class = "userInfo" th:text="|You are logged in as ${@userFrajkorController.loggedUser.username}|"></div>
+    </div>
+    <div th:unless="${@userFrajkorController.logged}">
+        <div class="userInfo" th:text="|You are not logged in. Log in at Gamestudio.|"></div>
+    </div>
+    <div><a class="gameStudioLink" href="/">Back to Gamestudio</a></div>
+</th:block>
 
 
 

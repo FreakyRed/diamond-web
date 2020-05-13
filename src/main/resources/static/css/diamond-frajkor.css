@@ -118,6 +118,7 @@ th, td {
 }
 
 th{
+    font-family: "Agency FB",Helvetica,"Times New Roman",sans-serif;
     background: cornflowerblue;
     color: black;
     font-weight: bolder;
@@ -161,4 +162,21 @@ footer{
     font-size: 120%;
     font-family: "Agency FB",Helvetica,sans-serif;
     color: whitesmoke;
+}
+
+.userInfo{
+    color: white;
+    font-family: "Agency FB", Helvetica, "Times New Roman", sans-serif;
+    text-align: center;
+}
+
+.gameStudioLink{
+    justify-content: center;
+    text-align: center;
+    text-decoration: none;
+    color: cornflowerblue;
+}
+
+.gameStudioLink:hover{
+    color: white;
 }
