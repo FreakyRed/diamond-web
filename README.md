@@ -3,7 +3,13 @@
 **GAME ASSIGNED :** Diamond a.k.a Kensington
 
 
-Youtube link: [https://www.youtube.com/watch?v=jgAZ0rJFdGQ]
+GAMESTUDIO 2020 YT : [https://youtu.be/b9cQOfTaJm8]
+
+Priznávam, že samotné rozhranie pre hru sa mi nepodarilo tak ako som reálne plánoval.
+
+
+-------------------------------------------------------------------------
+Youtube link for ConsoleUI: [https://www.youtube.com/watch?v=jgAZ0rJFdGQ]
 
 
 **DESCRIPTION FROM WIKIPEDIA: **
