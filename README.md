@@ -5,7 +5,7 @@
 
 GAMESTUDIO 2020 YT : [https://youtu.be/b9cQOfTaJm8]
 
-Priznávam, že samotné rozhranie pre hru sa mi nepodarilo tak ako som reálne plánoval.
+Uznávam, že samotné rozhranie pre hru sa mi nepodarilo tak ako som reálne plánoval
 
 
 -------------------------------------------------------------------------
