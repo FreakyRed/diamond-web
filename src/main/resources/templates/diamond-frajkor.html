@@ -79,7 +79,7 @@
             <div class="average-stars">
                 <th:block th:with="averageRating = ${averageRating}"
                           th:each="i: ${#numbers.sequence(0, averageRating - 1)}">
-                    <div class="fa fa-star checked"></div>
+                    <div th:if="${averageRating != 0}" class="fa fa-star checked"></div>
                 </th:block>
                 <th:block th:with="averageRating = ${averageRating}" th:each="i: ${#numbers.sequence(averageRating,5)}">
                     <div th:if="${i &lt; 5}" class="fa fa-star unchecked"></div>
@@ -92,7 +92,7 @@
             <div class="rating-stars">
                 <th:block th:with="playerRating = ${playerRating}"
                           th:each="i: ${#numbers.sequence(0, playerRating - 1)}">
-                    <div class="fa fa-star checked"></div>
+                    <div th:if="${playerRating != 0}"class="fa fa-star checked"></div>
                 </th:block>
                 <th:block th:with="playerRating = ${playerRating}" th:each="i: ${#numbers.sequence(playerRating,5)}">
                     <div th:if="${i &lt; 5}" class="fa fa-star unchecked"></div>

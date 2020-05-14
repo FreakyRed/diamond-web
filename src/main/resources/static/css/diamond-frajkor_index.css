@@ -33,11 +33,13 @@ h2{
 
 
 .notification{
+    width: 50%;
     margin-top: 20px;
+    margin-left: 400px;
     border-style: solid;
     border-color: cornflowerblue;
     border-radius: 5px;
-    color: black;
+    color: white;
     text-align: center;
     display: block;
     justify-content: center;
